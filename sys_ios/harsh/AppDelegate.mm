@@ -1,7 +1,7 @@
 #import "AppDelegate.h"
 #import "ViewController.h"
 #include "core.h"
-#include "sound.h"
+#include "resource.h"
 #include <AudioToolbox/AudioQueue.h>
 #include <AudioToolbox/AudioFile.h>
 #include <AudioToolbox/AudioServices.h>
@@ -85,8 +85,8 @@ void soundInit() {
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
-	Core::resume();
 	Core::reset();
+	Core::resume();
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application {

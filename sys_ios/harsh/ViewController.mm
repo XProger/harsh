@@ -25,7 +25,7 @@
 	view.drawableColorFormat = GLKViewDrawableColorFormatRGB565;
 	[EAGLContext setCurrentContext:self.context];
 	
-	self.view.multipleTouchEnabled = NO;
+	self.view.multipleTouchEnabled = YES;
 }
 
 - (void)viewDidUnload {	
