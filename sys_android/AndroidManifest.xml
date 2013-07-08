@@ -1,0 +1,24 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.xproger.ls"
+    android:versionCode="1"
+    android:versionName="1.0">
+
+	<supports-gl-texture android:name="GL_OES_compressed_ETC1_RGB8_texture" android:required="true"/>
+	
+    <uses-sdk android:minSdkVersion="9" android:targetSdkVersion="10" />
+    <supports-screens android:smallScreens="true" android:largeScreens="true" android:normalScreens="true" android:xlargeScreens="true" />
+
+    <application android:label="@string/app_name"
+        android:icon="@drawable/ic_launcher">
+        <activity android:name="com.xproger.ls.GameActivity"
+                  android:label="@string/app_name"
+                  android:screenOrientation="landscape"
+                  android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>

@@ -1,0 +1,389 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		99266D7E160A568B003FFEBA /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 99266D7D160A568B003FFEBA /* AudioToolbox.framework */; };
+		99266D81160A5E7C003FFEBA /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 99266D80160A5E7C003FFEBA /* UIKit.framework */; };
+		996585AF160A31450097B128 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 996585AE160A31450097B128 /* Foundation.framework */; };
+		996585B7160A31450097B128 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 996585B5160A31450097B128 /* InfoPlist.strings */; };
+		996585B9160A31450097B128 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 996585B8160A31450097B128 /* main.m */; };
+		996585CB160A3A8B0097B128 /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 996585C8160A3A8B0097B128 /* AppDelegate.mm */; };
+		996585CC160A3A8B0097B128 /* ViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 996585CA160A3A8B0097B128 /* ViewController.mm */; };
+		996585EB160A3AC50097B128 /* core.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 996585CE160A3AC50097B128 /* core.cpp */; };
+		996585EC160A3AC50097B128 /* game.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 996585D0160A3AC50097B128 /* game.cpp */; };
+		996585ED160A3AC50097B128 /* level.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 996585D2160A3AC50097B128 /* level.cpp */; };
+		996585EF160A3AC50097B128 /* objects.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 996585D5160A3AC50097B128 /* objects.cpp */; };
+		996585F0160A3AC50097B128 /* particle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 996585D7160A3AC50097B128 /* particle.cpp */; };
+		996585F1160A3AC50097B128 /* physic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 996585D9160A3AC50097B128 /* physic.cpp */; };
+		996585F2160A3AC50097B128 /* render.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 996585DB160A3AC50097B128 /* render.cpp */; };
+		996585F3160A3AC50097B128 /* resource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 996585DD160A3AC50097B128 /* resource.cpp */; };
+		996585F4160A3AC50097B128 /* shader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 996585DF160A3AC50097B128 /* shader.cpp */; };
+		996585F5160A3AC50097B128 /* sound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 996585E1160A3AC50097B128 /* sound.cpp */; };
+		996585F6160A3AC50097B128 /* sprite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 996585E3160A3AC50097B128 /* sprite.cpp */; };
+		996585F7160A3AC50097B128 /* texture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 996585E5160A3AC50097B128 /* texture.cpp */; };
+		996585F8160A3AC50097B128 /* tinf.c in Sources */ = {isa = PBXBuildFile; fileRef = 996585E7160A3AC50097B128 /* tinf.c */; };
+		996585F9160A3AC50097B128 /* utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 996585E9160A3AC50097B128 /* utils.cpp */; };
+		996585FB160A3B500097B128 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 996585FA160A3B500097B128 /* OpenGLES.framework */; };
+		996585FD160A3C620097B128 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 996585FC160A3C620097B128 /* GLKit.framework */; };
+		99658600160A3C960097B128 /* data.jet in Resources */ = {isa = PBXBuildFile; fileRef = 996585FF160A3C960097B128 /* data.jet */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		99266D7D160A568B003FFEBA /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		99266D80160A5E7C003FFEBA /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		996585A8160A31450097B128 /* harsh.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = harsh.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		996585AE160A31450097B128 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		996585B0160A31450097B128 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		996585B4160A31450097B128 /* harsh-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "harsh-Info.plist"; sourceTree = "<group>"; };
+		996585B6160A31450097B128 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		996585B8160A31450097B128 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		996585BA160A31450097B128 /* harsh-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "harsh-Prefix.pch"; sourceTree = "<group>"; };
+		996585BB160A31450097B128 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		996585C8160A3A8B0097B128 /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AppDelegate.mm; sourceTree = "<group>"; };
+		996585C9160A3A8B0097B128 /* ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		996585CA160A3A8B0097B128 /* ViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ViewController.mm; sourceTree = "<group>"; };
+		996585CE160A3AC50097B128 /* core.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = core.cpp; sourceTree = "<group>"; };
+		996585CF160A3AC50097B128 /* core.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = core.h; sourceTree = "<group>"; };
+		996585D0160A3AC50097B128 /* game.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = game.cpp; sourceTree = "<group>"; };
+		996585D1160A3AC50097B128 /* game.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = game.h; sourceTree = "<group>"; };
+		996585D2160A3AC50097B128 /* level.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = level.cpp; sourceTree = "<group>"; };
+		996585D3160A3AC50097B128 /* level.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = level.h; sourceTree = "<group>"; };
+		996585D5160A3AC50097B128 /* objects.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = objects.cpp; sourceTree = "<group>"; };
+		996585D6160A3AC50097B128 /* objects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = objects.h; sourceTree = "<group>"; };
+		996585D7160A3AC50097B128 /* particle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = particle.cpp; sourceTree = "<group>"; };
+		996585D8160A3AC50097B128 /* particle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = particle.h; sourceTree = "<group>"; };
+		996585D9160A3AC50097B128 /* physic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = physic.cpp; sourceTree = "<group>"; };
+		996585DA160A3AC50097B128 /* physic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = physic.h; sourceTree = "<group>"; };
+		996585DB160A3AC50097B128 /* render.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = render.cpp; sourceTree = "<group>"; };
+		996585DC160A3AC50097B128 /* render.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = render.h; sourceTree = "<group>"; };
+		996585DD160A3AC50097B128 /* resource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = resource.cpp; sourceTree = "<group>"; };
+		996585DE160A3AC50097B128 /* resource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = resource.h; sourceTree = "<group>"; };
+		996585DF160A3AC50097B128 /* shader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = shader.cpp; sourceTree = "<group>"; };
+		996585E0160A3AC50097B128 /* shader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = shader.h; sourceTree = "<group>"; };
+		996585E1160A3AC50097B128 /* sound.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sound.cpp; sourceTree = "<group>"; };
+		996585E2160A3AC50097B128 /* sound.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sound.h; sourceTree = "<group>"; };
+		996585E3160A3AC50097B128 /* sprite.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sprite.cpp; sourceTree = "<group>"; };
+		996585E4160A3AC50097B128 /* sprite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sprite.h; sourceTree = "<group>"; };
+		996585E5160A3AC50097B128 /* texture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = texture.cpp; sourceTree = "<group>"; };
+		996585E6160A3AC50097B128 /* texture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = texture.h; sourceTree = "<group>"; };
+		996585E7160A3AC50097B128 /* tinf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tinf.c; sourceTree = "<group>"; };
+		996585E8160A3AC50097B128 /* tinf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tinf.h; sourceTree = "<group>"; };
+		996585E9160A3AC50097B128 /* utils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = utils.cpp; sourceTree = "<group>"; };
+		996585EA160A3AC50097B128 /* utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = utils.h; sourceTree = "<group>"; };
+		996585FA160A3B500097B128 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
+		996585FC160A3C620097B128 /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
+		996585FF160A3C960097B128 /* data.jet */ = {isa = PBXFileReference; lastKnownFileType = file; path = data.jet; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		996585A5160A31450097B128 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				99266D81160A5E7C003FFEBA /* UIKit.framework in Frameworks */,
+				99266D7E160A568B003FFEBA /* AudioToolbox.framework in Frameworks */,
+				996585FD160A3C620097B128 /* GLKit.framework in Frameworks */,
+				996585FB160A3B500097B128 /* OpenGLES.framework in Frameworks */,
+				996585AF160A31450097B128 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		9965859D160A31450097B128 = {
+			isa = PBXGroup;
+			children = (
+				996585FE160A3C960097B128 /* data */,
+				996585B2160A31450097B128 /* harsh */,
+				996585AB160A31450097B128 /* Frameworks */,
+				996585A9160A31450097B128 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		996585A9160A31450097B128 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				996585A8160A31450097B128 /* harsh.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		996585AB160A31450097B128 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				99266D80160A5E7C003FFEBA /* UIKit.framework */,
+				99266D7D160A568B003FFEBA /* AudioToolbox.framework */,
+				996585FC160A3C620097B128 /* GLKit.framework */,
+				996585FA160A3B500097B128 /* OpenGLES.framework */,
+				996585AE160A31450097B128 /* Foundation.framework */,
+				996585B0160A31450097B128 /* CoreGraphics.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		996585B2160A31450097B128 /* harsh */ = {
+			isa = PBXGroup;
+			children = (
+				996585CD160A3AC50097B128 /* src */,
+				996585C8160A3A8B0097B128 /* AppDelegate.mm */,
+				996585C9160A3A8B0097B128 /* ViewController.h */,
+				996585CA160A3A8B0097B128 /* ViewController.mm */,
+				996585BB160A31450097B128 /* AppDelegate.h */,
+				996585B3160A31450097B128 /* Supporting Files */,
+			);
+			path = harsh;
+			sourceTree = "<group>";
+		};
+		996585B3160A31450097B128 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				996585B4160A31450097B128 /* harsh-Info.plist */,
+				996585B5160A31450097B128 /* InfoPlist.strings */,
+				996585B8160A31450097B128 /* main.m */,
+				996585BA160A31450097B128 /* harsh-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		996585CD160A3AC50097B128 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				996585CE160A3AC50097B128 /* core.cpp */,
+				996585CF160A3AC50097B128 /* core.h */,
+				996585D0160A3AC50097B128 /* game.cpp */,
+				996585D1160A3AC50097B128 /* game.h */,
+				996585D2160A3AC50097B128 /* level.cpp */,
+				996585D3160A3AC50097B128 /* level.h */,
+				996585D5160A3AC50097B128 /* objects.cpp */,
+				996585D6160A3AC50097B128 /* objects.h */,
+				996585D7160A3AC50097B128 /* particle.cpp */,
+				996585D8160A3AC50097B128 /* particle.h */,
+				996585D9160A3AC50097B128 /* physic.cpp */,
+				996585DA160A3AC50097B128 /* physic.h */,
+				996585DB160A3AC50097B128 /* render.cpp */,
+				996585DC160A3AC50097B128 /* render.h */,
+				996585DD160A3AC50097B128 /* resource.cpp */,
+				996585DE160A3AC50097B128 /* resource.h */,
+				996585DF160A3AC50097B128 /* shader.cpp */,
+				996585E0160A3AC50097B128 /* shader.h */,
+				996585E1160A3AC50097B128 /* sound.cpp */,
+				996585E2160A3AC50097B128 /* sound.h */,
+				996585E3160A3AC50097B128 /* sprite.cpp */,
+				996585E4160A3AC50097B128 /* sprite.h */,
+				996585E5160A3AC50097B128 /* texture.cpp */,
+				996585E6160A3AC50097B128 /* texture.h */,
+				996585E7160A3AC50097B128 /* tinf.c */,
+				996585E8160A3AC50097B128 /* tinf.h */,
+				996585E9160A3AC50097B128 /* utils.cpp */,
+				996585EA160A3AC50097B128 /* utils.h */,
+			);
+			name = src;
+			path = ../../src;
+			sourceTree = "<group>";
+		};
+		996585FE160A3C960097B128 /* data */ = {
+			isa = PBXGroup;
+			children = (
+				996585FF160A3C960097B128 /* data.jet */,
+			);
+			path = data;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		996585A7160A31450097B128 /* harsh */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 996585C0160A31450097B128 /* Build configuration list for PBXNativeTarget "harsh" */;
+			buildPhases = (
+				996585A4160A31450097B128 /* Sources */,
+				996585A5160A31450097B128 /* Frameworks */,
+				996585A6160A31450097B128 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = harsh;
+			productName = harsh;
+			productReference = 996585A8160A31450097B128 /* harsh.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		9965859F160A31450097B128 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0430;
+			};
+			buildConfigurationList = 996585A2160A31450097B128 /* Build configuration list for PBXProject "harsh" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 9965859D160A31450097B128;
+			productRefGroup = 996585A9160A31450097B128 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				996585A7160A31450097B128 /* harsh */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		996585A6160A31450097B128 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				996585B7160A31450097B128 /* InfoPlist.strings in Resources */,
+				99658600160A3C960097B128 /* data.jet in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		996585A4160A31450097B128 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				996585B9160A31450097B128 /* main.m in Sources */,
+				996585CB160A3A8B0097B128 /* AppDelegate.mm in Sources */,
+				996585CC160A3A8B0097B128 /* ViewController.mm in Sources */,
+				996585EB160A3AC50097B128 /* core.cpp in Sources */,
+				996585EC160A3AC50097B128 /* game.cpp in Sources */,
+				996585ED160A3AC50097B128 /* level.cpp in Sources */,
+				996585EF160A3AC50097B128 /* objects.cpp in Sources */,
+				996585F0160A3AC50097B128 /* particle.cpp in Sources */,
+				996585F1160A3AC50097B128 /* physic.cpp in Sources */,
+				996585F2160A3AC50097B128 /* render.cpp in Sources */,
+				996585F3160A3AC50097B128 /* resource.cpp in Sources */,
+				996585F4160A3AC50097B128 /* shader.cpp in Sources */,
+				996585F5160A3AC50097B128 /* sound.cpp in Sources */,
+				996585F6160A3AC50097B128 /* sprite.cpp in Sources */,
+				996585F7160A3AC50097B128 /* texture.cpp in Sources */,
+				996585F8160A3AC50097B128 /* tinf.c in Sources */,
+				996585F9160A3AC50097B128 /* utils.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		996585B5160A31450097B128 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				996585B6160A31450097B128 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		996585BE160A31450097B128 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Тимур Gagiev (V35M3Z2NL8)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				PROVISIONING_PROFILE = "6A171A78-F6CE-460F-8AD6-BC694BA1C2A8";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		996585BF160A31450097B128 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Тимур Gagiev (V35M3Z2NL8)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				PROVISIONING_PROFILE = "6A171A78-F6CE-460F-8AD6-BC694BA1C2A8";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		996585C1160A31450097B128 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "harsh/harsh-Prefix.pch";
+				INFOPLIST_FILE = "harsh/harsh-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		996585C2160A31450097B128 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "harsh/harsh-Prefix.pch";
+				INFOPLIST_FILE = "harsh/harsh-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		996585A2160A31450097B128 /* Build configuration list for PBXProject "harsh" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				996585BE160A31450097B128 /* Debug */,
+				996585BF160A31450097B128 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		996585C0160A31450097B128 /* Build configuration list for PBXNativeTarget "harsh" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				996585C1160A31450097B128 /* Debug */,
+				996585C2160A31450097B128 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 9965859F160A31450097B128 /* Project object */;
+}

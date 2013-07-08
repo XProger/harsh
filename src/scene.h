@@ -1,0 +1,103 @@
+#ifndef SCENE_H
+#define SCENE_H
+
+#include "utils.h"
+#include "resource.h"
+
+enum NodeType { NT_GROUP, NT_MODEL, NT_MESH, NT_WALKMAP, NT_LIGHT };
+
+//{ Scene Node (base)
+struct SceneNode {
+    SceneNode *parent, *child, *prev, *next;
+
+    Box rel_bbox, bbox;
+    mat4 rel_matrix, matrix;
+	bool visible;
+
+    SceneNode(SceneNode *parent, Stream *stream);
+    virtual ~SceneNode();
+
+    void setParent(SceneNode *parent);
+    void setMatrix(const mat4 &rel_matrix);
+    void updateBounds();
+
+    SceneNode *addChild(SceneNode *n);
+    SceneNode *removeChild(SceneNode *n);
+
+    virtual void update();
+    virtual void render();
+
+    void add(SceneNode *n);
+    void remove();
+};
+//}
+
+//{ Mesh Node
+struct Mesh : public SceneNode {
+protected:
+//    static quat2 jointCache[64];
+//    static Mesh *sortList;
+//    Mesh *sortPrev, *sortNext;
+public:
+	MeshRes *res;
+    Material *material;
+//	JointIndex *jMap;
+
+	Mesh(SceneNode *parent, Hash hash);
+	virtual ~Mesh();
+	virtual void render();
+//	void remap();
+//	void renderQuery();
+//	static void sortRender();
+};
+//}
+
+//{ Model Node
+/*
+struct Skeleton : public SceneNode {
+	//
+};
+
+struct Model : public SceneNode {
+	Model(SceneNode *parent, Hash hash);
+};
+*/
+//}
+
+//{ Camera
+#define CAMERA_MODE_FREE    0
+#define CAMERA_MODE_TARGET  1
+#define CAMERA_MODE_LOOKAT  2
+
+struct Camera : public SceneNode {
+    int mode;
+    float zNear, zFar, FOV, dist;
+
+    vec3 pos, angle, target;
+    vec4 planes[6];
+	mat4 mView, mProj, mViewProj;
+
+    Camera(Stream *stream = NULL);
+    virtual ~Camera();
+
+    void updateMatrix();
+    void updatePlanes();
+	void debugUpdate(float speed);
+    void setup();
+    bool checkVisible(const Box &v);
+};
+//}
+
+//{ Scene
+struct Scene : public SceneNode {
+    Camera *camera;
+
+    Scene();
+    virtual ~Scene();
+	void load(const char *name);
+	void checkVisible();
+    virtual void render();
+};
+//}
+
+#endif
