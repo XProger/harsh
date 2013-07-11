@@ -201,8 +201,7 @@ void VertexBuffer::bind() {
 			break;
 		case VF_P3BNTT :
 			//glVertexAttribPointer(vaNormal, 3, GL_FLOAT, false, VertexStride[format], &vP3NTr->normal);
-			glVertexAttribPointer(vaTexCoord0, 2, GL_FLOAT, false, VertexStride[format], &vP3BNTT->tc[0]);
-			glVertexAttribPointer(vaTexCoord1, 2, GL_FLOAT, false, VertexStride[format], &vP3BNTT->tc[2]);
+			glVertexAttribPointer(vaTexCoord0, 4, GL_SHORT, false, VertexStride[format], &vP3BNTT->tc);
 			glVertexAttribPointer(vaCoord, 3, GL_FLOAT, false, VertexStride[format], &vP3BNTT->pos);
 			break;
 		default :
@@ -272,7 +271,6 @@ void Render::resize(int width, int height) {
 void Render::resetStates() {
 	glEnableVertexAttribArray(vaCoord);
 	glEnableVertexAttribArray(vaTexCoord0);
-	glEnableVertexAttribArray(vaTexCoord1);
 
 	setCulling(CULL_NONE);
 	setCulling(CULL_BACK);
