@@ -24,7 +24,7 @@
 enum TexFormat { TEX_RGBA8 = 0, TEX_A_8, TEX_AI_88,
                  TEX_PVRTC2, TEX_PVRTC2A, TEX_PVRTC4, TEX_PVRTC4A,
                  TEX_DXT1, TEX_DXT1A, TEX_DXT3, TEX_DXT5,
-                 TEX_ETC1, TEX_MAX };
+                 TEX_ETC1, TEX_ATF, TEX_MAX };
 
 struct MipMap {
     void *data;

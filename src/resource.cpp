@@ -141,6 +141,7 @@ void TextureRes::load(Stream *stream) {
 		{0x22,	4,	4,	true,	TEX_DXT3},
 		{0x24,	4,	4,	true,	TEX_DXT5},
 		{0x36,	4,	4,	false,	TEX_ETC1},
+		{0x99,	1,	1,	false,	TEX_ATF}
 	};
 
 	int  id = header->dwpfFlags & 0xff;
@@ -159,14 +160,14 @@ void TextureRes::load(Stream *stream) {
 
 	int sizeX = header->dwWidth, sizeY = header->dwHeight;
 
-    MipMap *mipMaps = new MipMap[mipCount];
+	MipMap *mipMaps = new MipMap[mipCount];
 
 	for (int i = 0; i < mipCount; i++) {
-	    MipMap &m = mipMaps[i];
-		m.size   = (_max(sizeX, fmt->minX) * _max(sizeY, fmt->minY) * header->dwBitCount + 7) / 8;
+		MipMap &m = mipMaps[i];
+		m.size   = fmt->texFormat == TEX_ATF ? header->dwDataSize : ((_max(sizeX, fmt->minX) * _max(sizeY, fmt->minY) * header->dwBitCount + 7) / 8);
 		m.data   = stream->getData(m.size);
-        m.width  = sizeX;
-        m.height = sizeY;
+		m.width  = sizeX;
+		m.height = sizeY;
 		sizeX >>= 1;
 		sizeY >>= 1;
 	}
@@ -175,7 +176,7 @@ void TextureRes::load(Stream *stream) {
     height = header->dwHeight;
 	obj = Render::createTexture(fmt->texFormat, mipMaps, mipCount);
 
-	delete[] mipMaps;
+	delete mipMaps;
     m_valid = obj != NULL;
 }
 

@@ -255,6 +255,9 @@ void Render::init() {
 	m_vbuffer = NULL;
 	m_ibuffer = NULL;
 
+	LOG("GL_VERSION : %s\n", glGetString(GL_VERSION));
+	LOG("GL_VENDOR  : %s\n", glGetString(GL_VENDOR));
+//	LOG("GL_EXTENSIONS : %s\n", glGetString(GL_EXTENSIONS));
 //	glGenFramebuffers(1, &renderTarget);
 }
 
@@ -271,6 +274,7 @@ void Render::resize(int width, int height) {
 void Render::resetStates() {
 	glEnableVertexAttribArray(vaCoord);
 	glEnableVertexAttribArray(vaTexCoord0);
+
 
 	setCulling(CULL_NONE);
 	setCulling(CULL_BACK);

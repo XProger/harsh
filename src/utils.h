@@ -229,22 +229,22 @@ struct quat {
 	}
 
 	vec3 operator * (const vec3 &v) const {
-		quat q = *this * quat(v.x, v.y, v.z, 0) * q.inverse();
+		quat q = *this * quat(v.x, v.y, v.z, 0) * inverse();
 		return vec3(q.x, q.y, q.z);
 	}
 
-	inline quat inverse() {
+	inline quat inverse() const {
 		return quat(-x, -y, -z, w);
 	}
 
 	inline float dot(const quat &q) const { return x*q.x + y*q.y + z*q.z + w*q.w; }
 
-	inline quat normal() {
+	inline quat normal() const {
 		float len = 1.0f / sqrtf(x*x + y*y + z*z + w*w);
 		return quat(x*len, y*len, z*len, w*len);
 	}
 
-	quat lerp(const quat &q, float t) {
+	quat lerp(const quat &q, float t) const {
 		return dot(q) < 0 ? (*this - (q + *this) * t) : (*this + (q - *this) * t);
 	}
 };

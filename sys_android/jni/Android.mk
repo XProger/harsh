@@ -7,7 +7,6 @@ LOCAL_CFLAGS := -DANDROID -DGL_GLEXT_PROTOTYPES=1
 LOCAL_MODULE := game	
 LOCAL_SRC_FILES := main.cpp \
 	../../src/core.cpp \
-	../../src/tinf.cpp \
 	../../src/utils.cpp \
 	../../src/renderGL.cpp \
 	../../src/resource.cpp \

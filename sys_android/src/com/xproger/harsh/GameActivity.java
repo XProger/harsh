@@ -1,4 +1,4 @@
-package com.xproger.ls;
+package com.xproger.harsh;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -159,6 +159,7 @@ class GameGLSurfaceView extends GLSurfaceView {
         setEGLConfigChooser(8, 8, 8, 8, 16, 0);
         setRenderer(mRenderer);
         getHolder().setFormat(PixelFormat.RGBA_8888);
+        getHolder().setKeepScreenOn(true);       
     }
     
     @Override
