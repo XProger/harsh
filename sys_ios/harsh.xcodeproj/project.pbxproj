@@ -16,21 +16,16 @@
 		996585CC160A3A8B0097B128 /* ViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 996585CA160A3A8B0097B128 /* ViewController.mm */; };
 		996585EB160A3AC50097B128 /* core.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 996585CE160A3AC50097B128 /* core.cpp */; };
 		996585EC160A3AC50097B128 /* game.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 996585D0160A3AC50097B128 /* game.cpp */; };
-		996585ED160A3AC50097B128 /* level.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 996585D2160A3AC50097B128 /* level.cpp */; };
-		996585EF160A3AC50097B128 /* objects.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 996585D5160A3AC50097B128 /* objects.cpp */; };
-		996585F0160A3AC50097B128 /* particle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 996585D7160A3AC50097B128 /* particle.cpp */; };
-		996585F1160A3AC50097B128 /* physic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 996585D9160A3AC50097B128 /* physic.cpp */; };
-		996585F2160A3AC50097B128 /* render.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 996585DB160A3AC50097B128 /* render.cpp */; };
 		996585F3160A3AC50097B128 /* resource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 996585DD160A3AC50097B128 /* resource.cpp */; };
-		996585F4160A3AC50097B128 /* shader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 996585DF160A3AC50097B128 /* shader.cpp */; };
-		996585F5160A3AC50097B128 /* sound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 996585E1160A3AC50097B128 /* sound.cpp */; };
-		996585F6160A3AC50097B128 /* sprite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 996585E3160A3AC50097B128 /* sprite.cpp */; };
-		996585F7160A3AC50097B128 /* texture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 996585E5160A3AC50097B128 /* texture.cpp */; };
-		996585F8160A3AC50097B128 /* tinf.c in Sources */ = {isa = PBXBuildFile; fileRef = 996585E7160A3AC50097B128 /* tinf.c */; };
 		996585F9160A3AC50097B128 /* utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 996585E9160A3AC50097B128 /* utils.cpp */; };
 		996585FB160A3B500097B128 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 996585FA160A3B500097B128 /* OpenGLES.framework */; };
 		996585FD160A3C620097B128 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 996585FC160A3C620097B128 /* GLKit.framework */; };
 		99658600160A3C960097B128 /* data.jet in Resources */ = {isa = PBXBuildFile; fileRef = 996585FF160A3C960097B128 /* data.jet */; };
+		99C2D3C6178B2D1D002E6F09 /* renderGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 99C2D3C2178B2D1D002E6F09 /* renderGL.cpp */; };
+		99C2D3C7178B2D1D002E6F09 /* scene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 99C2D3C3178B2D1D002E6F09 /* scene.cpp */; };
+		99C2D3C8178B2D1D002E6F09 /* tinf.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 99C2D3C5178B2D1D002E6F09 /* tinf.cpp */; };
+		99C2D3CA178B2DAA002E6F09 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 99C2D3C9178B2DAA002E6F09 /* Default-568h@2x.png */; };
+		99C2D3CE178B2DCE002E6F09 /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 99C2D3CD178B2DCE002E6F09 /* icon.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -51,33 +46,21 @@
 		996585CF160A3AC50097B128 /* core.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = core.h; sourceTree = "<group>"; };
 		996585D0160A3AC50097B128 /* game.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = game.cpp; sourceTree = "<group>"; };
 		996585D1160A3AC50097B128 /* game.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = game.h; sourceTree = "<group>"; };
-		996585D2160A3AC50097B128 /* level.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = level.cpp; sourceTree = "<group>"; };
-		996585D3160A3AC50097B128 /* level.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = level.h; sourceTree = "<group>"; };
-		996585D5160A3AC50097B128 /* objects.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = objects.cpp; sourceTree = "<group>"; };
-		996585D6160A3AC50097B128 /* objects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = objects.h; sourceTree = "<group>"; };
-		996585D7160A3AC50097B128 /* particle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = particle.cpp; sourceTree = "<group>"; };
-		996585D8160A3AC50097B128 /* particle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = particle.h; sourceTree = "<group>"; };
-		996585D9160A3AC50097B128 /* physic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = physic.cpp; sourceTree = "<group>"; };
-		996585DA160A3AC50097B128 /* physic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = physic.h; sourceTree = "<group>"; };
-		996585DB160A3AC50097B128 /* render.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = render.cpp; sourceTree = "<group>"; };
 		996585DC160A3AC50097B128 /* render.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = render.h; sourceTree = "<group>"; };
 		996585DD160A3AC50097B128 /* resource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = resource.cpp; sourceTree = "<group>"; };
 		996585DE160A3AC50097B128 /* resource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = resource.h; sourceTree = "<group>"; };
-		996585DF160A3AC50097B128 /* shader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = shader.cpp; sourceTree = "<group>"; };
-		996585E0160A3AC50097B128 /* shader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = shader.h; sourceTree = "<group>"; };
-		996585E1160A3AC50097B128 /* sound.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sound.cpp; sourceTree = "<group>"; };
-		996585E2160A3AC50097B128 /* sound.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sound.h; sourceTree = "<group>"; };
-		996585E3160A3AC50097B128 /* sprite.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sprite.cpp; sourceTree = "<group>"; };
-		996585E4160A3AC50097B128 /* sprite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sprite.h; sourceTree = "<group>"; };
-		996585E5160A3AC50097B128 /* texture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = texture.cpp; sourceTree = "<group>"; };
-		996585E6160A3AC50097B128 /* texture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = texture.h; sourceTree = "<group>"; };
-		996585E7160A3AC50097B128 /* tinf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tinf.c; sourceTree = "<group>"; };
 		996585E8160A3AC50097B128 /* tinf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tinf.h; sourceTree = "<group>"; };
 		996585E9160A3AC50097B128 /* utils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = utils.cpp; sourceTree = "<group>"; };
 		996585EA160A3AC50097B128 /* utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = utils.h; sourceTree = "<group>"; };
 		996585FA160A3B500097B128 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		996585FC160A3C620097B128 /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
 		996585FF160A3C960097B128 /* data.jet */ = {isa = PBXFileReference; lastKnownFileType = file; path = data.jet; sourceTree = "<group>"; };
+		99C2D3C2178B2D1D002E6F09 /* renderGL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = renderGL.cpp; sourceTree = "<group>"; };
+		99C2D3C3178B2D1D002E6F09 /* scene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = scene.cpp; sourceTree = "<group>"; };
+		99C2D3C4178B2D1D002E6F09 /* scene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scene.h; sourceTree = "<group>"; };
+		99C2D3C5178B2D1D002E6F09 /* tinf.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tinf.cpp; sourceTree = "<group>"; };
+		99C2D3C9178B2DAA002E6F09 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-568h@2x.png"; path = "../Default-568h@2x.png"; sourceTree = "<group>"; };
+		99C2D3CD178B2DCE002E6F09 /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = icon.png; path = ../icon.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -143,6 +126,8 @@
 		996585B3160A31450097B128 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				99C2D3CD178B2DCE002E6F09 /* icon.png */,
+				99C2D3C9178B2DAA002E6F09 /* Default-568h@2x.png */,
 				996585B4160A31450097B128 /* harsh-Info.plist */,
 				996585B5160A31450097B128 /* InfoPlist.strings */,
 				996585B8160A31450097B128 /* main.m */,
@@ -154,31 +139,17 @@
 		996585CD160A3AC50097B128 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				99C2D3C2178B2D1D002E6F09 /* renderGL.cpp */,
+				99C2D3C3178B2D1D002E6F09 /* scene.cpp */,
+				99C2D3C4178B2D1D002E6F09 /* scene.h */,
+				99C2D3C5178B2D1D002E6F09 /* tinf.cpp */,
 				996585CE160A3AC50097B128 /* core.cpp */,
 				996585CF160A3AC50097B128 /* core.h */,
 				996585D0160A3AC50097B128 /* game.cpp */,
 				996585D1160A3AC50097B128 /* game.h */,
-				996585D2160A3AC50097B128 /* level.cpp */,
-				996585D3160A3AC50097B128 /* level.h */,
-				996585D5160A3AC50097B128 /* objects.cpp */,
-				996585D6160A3AC50097B128 /* objects.h */,
-				996585D7160A3AC50097B128 /* particle.cpp */,
-				996585D8160A3AC50097B128 /* particle.h */,
-				996585D9160A3AC50097B128 /* physic.cpp */,
-				996585DA160A3AC50097B128 /* physic.h */,
-				996585DB160A3AC50097B128 /* render.cpp */,
 				996585DC160A3AC50097B128 /* render.h */,
 				996585DD160A3AC50097B128 /* resource.cpp */,
 				996585DE160A3AC50097B128 /* resource.h */,
-				996585DF160A3AC50097B128 /* shader.cpp */,
-				996585E0160A3AC50097B128 /* shader.h */,
-				996585E1160A3AC50097B128 /* sound.cpp */,
-				996585E2160A3AC50097B128 /* sound.h */,
-				996585E3160A3AC50097B128 /* sprite.cpp */,
-				996585E4160A3AC50097B128 /* sprite.h */,
-				996585E5160A3AC50097B128 /* texture.cpp */,
-				996585E6160A3AC50097B128 /* texture.h */,
-				996585E7160A3AC50097B128 /* tinf.c */,
 				996585E8160A3AC50097B128 /* tinf.h */,
 				996585E9160A3AC50097B128 /* utils.cpp */,
 				996585EA160A3AC50097B128 /* utils.h */,
@@ -247,6 +218,8 @@
 			files = (
 				996585B7160A31450097B128 /* InfoPlist.strings in Resources */,
 				99658600160A3C960097B128 /* data.jet in Resources */,
+				99C2D3CA178B2DAA002E6F09 /* Default-568h@2x.png in Resources */,
+				99C2D3CE178B2DCE002E6F09 /* icon.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -262,18 +235,11 @@
 				996585CC160A3A8B0097B128 /* ViewController.mm in Sources */,
 				996585EB160A3AC50097B128 /* core.cpp in Sources */,
 				996585EC160A3AC50097B128 /* game.cpp in Sources */,
-				996585ED160A3AC50097B128 /* level.cpp in Sources */,
-				996585EF160A3AC50097B128 /* objects.cpp in Sources */,
-				996585F0160A3AC50097B128 /* particle.cpp in Sources */,
-				996585F1160A3AC50097B128 /* physic.cpp in Sources */,
-				996585F2160A3AC50097B128 /* render.cpp in Sources */,
 				996585F3160A3AC50097B128 /* resource.cpp in Sources */,
-				996585F4160A3AC50097B128 /* shader.cpp in Sources */,
-				996585F5160A3AC50097B128 /* sound.cpp in Sources */,
-				996585F6160A3AC50097B128 /* sprite.cpp in Sources */,
-				996585F7160A3AC50097B128 /* texture.cpp in Sources */,
-				996585F8160A3AC50097B128 /* tinf.c in Sources */,
 				996585F9160A3AC50097B128 /* utils.cpp in Sources */,
+				99C2D3C6178B2D1D002E6F09 /* renderGL.cpp in Sources */,
+				99C2D3C7178B2D1D002E6F09 /* scene.cpp in Sources */,
+				99C2D3C8178B2D1D002E6F09 /* tinf.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -343,10 +309,12 @@
 		996585C1160A31450097B128 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer: Timur Gagiev (V35M3Z2NL8)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "harsh/harsh-Prefix.pch";
 				INFOPLIST_FILE = "harsh/harsh-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "${TARGET_NAME}";
+				PROVISIONING_PROFILE = "E4C3E86D-C6DB-4AC8-B6C2-C684CA2D7151";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -354,10 +322,12 @@
 		996585C2160A31450097B128 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer: Timur Gagiev (V35M3Z2NL8)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "harsh/harsh-Prefix.pch";
 				INFOPLIST_FILE = "harsh/harsh-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "${TARGET_NAME}";
+				PROVISIONING_PROFILE = "E4C3E86D-C6DB-4AC8-B6C2-C684CA2D7151";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
