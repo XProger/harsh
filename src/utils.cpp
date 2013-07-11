@@ -165,11 +165,10 @@ Stream::Stream(unsigned int hash) : ptr(0), pos(0), size(0) {
 Stream::~Stream() {
 	free(ptr);
 }
-// (* (unsigned short*) (lzo_voidp) (p))
-//(*(unsigned short*)(p))
-#define UA_GET32(p)		(*(unsigned int*)(p))
-#define UA_SET32(p,v)	((*(unsigned int*)(p)) = (unsigned int)(v))
-#define UA_COPY32(d,s)	UA_SET32(d, UA_GET32(s))
+
+#define UA_GET32(p)			(*(unsigned int*)(p))
+#define UA_SET32(p,v)		((*(unsigned int*)(p)) = (unsigned int)(v))
+#define UA_COPY32(d,s)		UA_SET32(d, UA_GET32(s))
 #define PTR(a)              ((unsigned long) (a))
 #define PTR_LINEAR(a)       PTR(a)
 #define PTR_ALIGNED2_4(a,b) (((PTR_LINEAR(a) | PTR_LINEAR(b)) & 3) == 0)

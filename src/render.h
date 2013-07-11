@@ -101,7 +101,7 @@ struct Vertex_P3BNTT {
 	vec3 pos;
 //	char binormal[4];
 //	char normal[4];
-	short tc[4];
+	float tc[4];
 };
 
 const int VertexStride[VF_MAX] = {

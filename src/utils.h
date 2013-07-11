@@ -229,11 +229,11 @@ struct quat {
 	}
 
 	vec3 operator * (const vec3 &v) const {
-		quat q = *this * quat(v.x, v.y, v.z, 0) * inverse();
+		quat q = *this * quat(v.x, v.y, v.z, 0) * q.inverse();
 		return vec3(q.x, q.y, q.z);
 	}
 
-	inline quat inverse() const {
+	inline quat inverse() {
 		return quat(-x, -y, -z, w);
 	}
 

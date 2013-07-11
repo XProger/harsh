@@ -201,7 +201,7 @@ void VertexBuffer::bind() {
 			break;
 		case VF_P3BNTT :
 			//glVertexAttribPointer(vaNormal, 3, GL_FLOAT, false, VertexStride[format], &vP3NTr->normal);
-			glVertexAttribPointer(vaTexCoord0, 4, GL_SHORT, false, VertexStride[format], &vP3BNTT->tc);
+			glVertexAttribPointer(vaTexCoord0, 4, GL_FLOAT, false, VertexStride[format], &vP3BNTT->tc);
 			glVertexAttribPointer(vaCoord, 3, GL_FLOAT, false, VertexStride[format], &vP3BNTT->pos);
 			break;
 		default :
