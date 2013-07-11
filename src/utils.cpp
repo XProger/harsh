@@ -1,13 +1,15 @@
 #include "utils.h"
 #include <cstdlib>
-#include "tinf.h"
 
 #define APK_PACK_NAME "res/drawable/data.jet"
 #define get16bits(d) (*((const unsigned short *) (d)))
 
 int Stream::packFilesCount;
 PackFile *Stream::packFiles;
+int Stream::packOffset;
 FILE *Stream::f;
+
+int Stream::packSet;
 
 void Stream::init(const char *packName) {
     packFiles = NULL;
@@ -65,7 +67,7 @@ void Stream::init(const char *packName) {
 		ptr = &ptr[46 + lenName + lenExtra];
 	}
 	delete[] data;
-	fseek(f, offset, SEEK_SET);
+	fseek(f, offset, SEEK_SET);	
 #endif
 // read file table
 	int fpos = ftell(f);
@@ -74,6 +76,7 @@ void Stream::init(const char *packName) {
 	fread(packFiles, 1, sizeof(PackFile) * packFilesCount, f);
 	for (int i = 0; i < packFilesCount; i++)
 		packFiles[i].offset += fpos;
+	packOffset = ftell(f);
 }
 
 void Stream::deinit() {
@@ -135,11 +138,17 @@ Stream::Stream(unsigned int hash) : ptr(0), pos(0), size(0) {
             ptr = new char[p.size];
             char *cdata = (p.size != p.csize) ? new char[p.csize] : ptr;
 
-            fseek(f, p.offset, SEEK_SET);
+			if (packOffset != p.offset) {
+				fseek(f, p.offset, SEEK_SET);
+				packSet++;
+			}
             fread(cdata, 1, p.csize, f);
+			packOffset = p.offset + p.csize;
 
-            if (p.size != p.csize) { // compressed
-                if (tinf_uncompress(ptr, &size, cdata) != TINF_OK || p.size != size) {
+            if (p.size != p.csize) { // compressed				
+				if (lzo_decompress((lzo_bytep)cdata, p.csize, (lzo_bytep)ptr) != p.size) {
+					LOG("%d - %d", p.size, size);
+                //if (tinf_uncompress(ptr, &size, cdata) != TINF_OK || p.size != size) {
                     LOG("Stream: error uncompress %u\n", p.hash);
                     delete[] ptr;
                     ptr = NULL;
@@ -155,4 +164,144 @@ Stream::Stream(unsigned int hash) : ptr(0), pos(0), size(0) {
 
 Stream::~Stream() {
 	free(ptr);
+}
+// (* (unsigned short*) (lzo_voidp) (p))
+//(*(unsigned short*)(p))
+#define UA_GET32(p)		(*(unsigned int*)(p))
+#define UA_SET32(p,v)	((*(unsigned int*)(p)) = (unsigned int)(v))
+#define UA_COPY32(d,s)	UA_SET32(d, UA_GET32(s))
+#define PTR(a)              ((unsigned long) (a))
+#define PTR_LINEAR(a)       PTR(a)
+#define PTR_ALIGNED2_4(a,b) (((PTR_LINEAR(a) | PTR_LINEAR(b)) & 3) == 0)
+
+int lzo_decompress(const lzo_bytep in, int in_len, lzo_bytep out) {
+	register lzo_bytep op;
+	register const lzo_bytep ip;
+	register unsigned int t;
+	register const lzo_bytep m_pos;
+
+	op = out;
+	ip = in;
+
+	if (*ip > 17) {
+		t = *ip++ - 17;
+		if (t < 4)
+			goto match_next;
+		do *op++ = *ip++; while (--t > 0);
+		goto first_literal_run;
+	}
+
+	while (1) {
+		t = *ip++;
+		if (t >= 16)
+			goto match;
+
+		if (t == 0) {
+			while (*ip == 0) {
+				t += 255;
+				ip++;
+			}
+			t += 15 + *ip++;
+		}
+
+		if (PTR_ALIGNED2_4(op,ip)) {
+			UA_COPY32(op,ip);
+			op += 4; ip += 4;
+			if (--t > 0) {
+				if (t >= 4) {
+					do {
+						UA_COPY32(op,ip);
+						op += 4; ip += 4; t -= 4;
+					} while (t >= 4);
+					if (t > 0) do *op++ = *ip++; while (--t > 0);
+				} else
+					do *op++ = *ip++; while (--t > 0);
+			}
+		} else {
+            *op++ = *ip++; *op++ = *ip++; *op++ = *ip++;
+            do *op++ = *ip++; while (--t > 0);
+		}
+
+first_literal_run:
+		t = *ip++;
+		if (t >= 16)
+			goto match;
+		m_pos = op - (1 + 0x0800);
+		m_pos -= t >> 2;
+		m_pos -= *ip++ << 2;
+		*op++ = *m_pos++; *op++ = *m_pos++; *op++ = *m_pos;
+		goto match_done;
+
+		do {
+match:
+			if (t >= 64) {
+				m_pos = op - 1;
+				m_pos -= (t >> 2) & 7;
+				m_pos -= *ip++ << 3;
+				t = (t >> 5) - 1;
+				goto copy_match;
+			} else 
+				if (t >= 32) {
+					t &= 31;
+					if (t == 0)	{
+						while (*ip == 0) {
+							t += 255;
+							ip++;
+						}
+						t += 31 + *ip++;
+					}
+					m_pos = op - 1;
+					m_pos -= (ip[0] >> 2) + (ip[1] << 6);
+					ip += 2;
+				} else 
+					if (t >= 16) {
+						m_pos = op;
+						m_pos -= (t & 8) << 11;
+						t &= 7;
+						if (t == 0)	{
+							while (*ip == 0) {
+								t += 255;
+								ip++;
+							}
+							t += 7 + *ip++;
+						}						
+						m_pos -= (ip[0] >> 2) + (ip[1] << 6);
+						ip += 2;
+						if (m_pos == op)
+							goto eof_found;
+						m_pos -= 0x4000;
+					} else {
+						m_pos = op - 1;
+						m_pos -= t >> 2;
+						m_pos -= *ip++ << 2;
+						*op++ = *m_pos++; *op++ = *m_pos;
+						goto match_done;
+					}
+
+			if (t >= 2 * 4 - (3 - 1) && PTR_ALIGNED2_4(op,m_pos)) {
+			//if (t >= 2 * 4 - (3 - 1) && (op - m_pos) >= 4) {
+				UA_COPY32(op,m_pos);
+				op += 4; m_pos += 4; t -= 4 - (3 - 1);
+				do {
+					UA_COPY32(op,m_pos);
+					op += 4; m_pos += 4; t -= 4;
+				} while (t >= 4);
+				if (t > 0) do *op++ = *m_pos++; while (--t > 0);
+			} else {
+copy_match:
+				*op++ = *m_pos++; *op++ = *m_pos++;
+				do *op++ = *m_pos++; while (--t > 0);
+			}
+match_done:
+			t = ip[-2] & 3;
+			if (t == 0)
+				break;
+match_next:
+			*op++ = *ip++;
+			if (t > 1) { *op++ = *ip++; if (t > 2) { *op++ = *ip++; } }
+			t = *ip++;
+		} while (1);
+	}
+eof_found:
+	return op - out;
 }

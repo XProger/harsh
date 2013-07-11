@@ -73,12 +73,20 @@
     PFNGLUNIFORM2FVPROC glUniform2fv;
     PFNGLUNIFORM3FVPROC glUniform3fv;
     PFNGLUNIFORM4FVPROC glUniform4fv;
-    PFNGLUNIFORMMATRIX3FVPROC glUniformMatrix3fv;
     PFNGLUNIFORMMATRIX4FVPROC glUniformMatrix4fv;
     PFNGLBINDATTRIBLOCATIONPROC glBindAttribLocation;
 	PFNGLENABLEVERTEXATTRIBARRAYPROC glEnableVertexAttribArray;
-	PFNGLDISABLEVERTEXATTRIBARRAYPROC glDisableVertexAttribArray;
 	PFNGLVERTEXATTRIBPOINTERPROC glVertexAttribPointer;
+// RTT
+	/*
+	PFNGLGENFRAMEBUFFERSPROC glGenFramebuffersEXT;
+	PFNGLBINDFRAMEBUFFERPROC glBindFramebufferEXT;
+    PFNGLFRAMEBUFFERTEXTURE2DPROC glFramebufferTexture2DEXT;
+
+    #define glGenFramebuffers			glGenFramebuffersEXT
+	#define glBindFramebuffer			glBindFramebufferEXT
+    #define glFramebufferTexture2D		glFramebufferTexture2DEXT
+	*/
 #endif
 
 // DXT
@@ -97,11 +105,13 @@
 BlendMode Render::m_blending;
 CullMode Render::m_culling;
 bool Render::m_depthWrite, Render::m_depthTest, Render::m_alphaTest;
+int Render::m_active_texture;
 int Render::width, Render::height;
 void *Render::activeTexture[8];
 void *Render::activeShader;
 RenderParams Render::params;
-int Render::statSetTex;
+int Render::statSetTex, Render::statTriCount;
+void *Render::m_vbuffer, *Render::m_ibuffer;
 
 GLuint renderTarget = 0;
 GLint renderTargetOld = 0;
@@ -147,7 +157,10 @@ IndexBuffer::~IndexBuffer() {
 }
 
 void IndexBuffer::bind() {
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (GLuint)obj);
+	if (Render::m_ibuffer != obj) {
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (GLuint)obj);
+		Render::m_ibuffer = obj;
+	}
 }
 
 // VertexBuffer ----------------------------------------------
@@ -162,7 +175,10 @@ VertexBuffer::~VertexBuffer() {
 }
 
 void VertexBuffer::bind() {
-	glBindBuffer(GL_ARRAY_BUFFER, (GLuint)obj);
+	if (Render::m_vbuffer != obj) {
+		glBindBuffer(GL_ARRAY_BUFFER, (GLuint)obj);
+		Render::m_vbuffer = obj;
+	}
 	Vertex_P2T2 *vP2T2 = NULL;
 	Vertex_P3NT *vP3NT = NULL;
 	Vertex_P3NT_RAW *vP3NTr = NULL;
@@ -224,14 +240,22 @@ void Render::init() {
 		GetProcOGL(glUniform2fv);
 		GetProcOGL(glUniform3fv);
 		GetProcOGL(glUniform4fv);
-		GetProcOGL(glUniformMatrix3fv);
 		GetProcOGL(glUniformMatrix4fv);
 		GetProcOGL(glBindAttribLocation);
 		GetProcOGL(glEnableVertexAttribArray);
-		GetProcOGL(glDisableVertexAttribArray);
 		GetProcOGL(glVertexAttribPointer);
+	/*
+		GetProcOGL(glGenFramebuffersEXT);
+		GetProcOGL(glBindFramebufferEXT);
+		GetProcOGL(glFramebufferTexture2DEXT);
+	*/
 	#endif
 	resetStates();
+
+	m_vbuffer = NULL;
+	m_ibuffer = NULL;
+
+//	glGenFramebuffers(1, &renderTarget);
 }
 
 void Render::deinit() {
@@ -260,6 +284,7 @@ void Render::resetStates() {
 	for (int i = 0; i < 8; i++)
 		activeTexture[i] = NULL;
 	activeShader = NULL;
+	m_vbuffer = m_ibuffer = NULL;
 	setViewport(0, 0, width, height);
 }
 
@@ -310,7 +335,7 @@ void* Render::createTexture(TexFormat texFormat, MipMap *mipMaps, int mipCount) 
 	
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
+	
 	int aniso;
 	glGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &aniso);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, aniso);
@@ -349,8 +374,8 @@ void* Render::createShader(void *data) {
 
 // init samplers
 	Render::setShader(ID);
-	const char *samplers[] = {"sDiffuse", "sMask", "sLight", "sAmbient"};
-	for (int i = 0; i < 4; i++)
+	const char *samplers[] = {"sDiffuse", "sMask", "sLight"};
+	for (int i = 0; i < 3; i++)
 		glUniform1iv(glGetUniformLocation(*ID, samplers[i]), 1, &i);
 
 	return ID;
@@ -420,7 +445,10 @@ void Render::setTexture(void *obj, int sampler) {
     if (activeTexture[sampler] != obj) {
 		statSetTex++;
 		activeTexture[sampler] = obj;
-        glActiveTexture(GL_TEXTURE0 + sampler);
+		if (m_active_texture != sampler) {
+			glActiveTexture(GL_TEXTURE0 + sampler);
+			m_active_texture = sampler;
+		}
         glBindTexture(GL_TEXTURE_2D, obj ? *(GLuint*)obj : 0);
     }
 }
@@ -467,5 +495,6 @@ void Render::drawTriangles(IndexBuffer *iBuffer, VertexBuffer *vBuffer, int inde
 	iBuffer->bind();
 	vBuffer->bind();
 	glDrawElements(GL_TRIANGLES, triCount * 3, GL_UNSIGNED_SHORT, (GLvoid*)(indexFirst * sizeof(short)));
+	statTriCount += triCount;
 }
 #endif // #ifdef OGL

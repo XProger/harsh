@@ -6,11 +6,14 @@
 
 //{ Resource (base)
 #define RES_CACHE_TIME 3000
+#ifdef WIN32
+	#define RES_LIST
+#endif
 
 typedef unsigned int Hash;
 
 struct Resource : public ListItem {
-protected:
+//protected:
 	static List *list;
 
     Hash hash;
@@ -59,7 +62,7 @@ public:
 };
 
 struct Texture {
-protected:
+//protected:
 	TextureRes *res;
 public:
 	Texture(const char *name, Hash hash = 0) { res = TextureRes::load(name, hash); }
@@ -93,7 +96,7 @@ const ShaderParamInfo SHADER_PARAM_INFO[SP_MAX] = {
 	{utMat4, "uModelMatrix", 	sizeof(mat4), 1, &Render::params.mModel},
 //	{utVec4, "uColor", 			sizeof(vec4), 1, &Render::params.color},
 //	{utVec3, "uLightPos", 		sizeof(vec3), 1, &Render::params.light.pos},
-	{utVec4, "uLMap",			sizeof(vec4), 2, NULL},
+	{utVec4, "uLMap",			sizeof(vec4), 1, NULL},
 };
 
 struct ShaderRes : public Resource {
@@ -101,6 +104,8 @@ protected:
 	virtual void load(Stream *stream);
 public:
     void *obj;
+    int index[SP_MAX];
+
 	ShaderRes(Hash hash) : Resource(hash, true), obj(0) {}
 	virtual ~ShaderRes() { Render::freeShader(&obj); }
 
@@ -111,9 +116,8 @@ struct Shader {
 protected:
 	ShaderRes *res;
 	static bool states[SP_MAX];
-    int index[SP_MAX];
 public:
-	Shader(const char *name, Hash hash = 0) { res = ShaderRes::load(name, hash); for (int i = 0; i < SP_MAX; i++) index[i] = -1; }
+	Shader(const char *name, Hash hash = 0) { res = ShaderRes::load(name, hash); }
 	virtual ~Shader() { if (res) res->free(); }
 	bool bind();
 	static void setMatrixViewProj(const mat4 &value)    { setParam(spMatrixViewProj, &value); }
@@ -165,12 +169,11 @@ public:
 
 struct Material {
 	Shader	*shader;
-	Texture	*diffuse, *mask, *lightMap, *ambientMap;
-	vec4	param[2];
+	Texture	*diffuse, *mask, *lightMap;
+	vec4	param;
 	BlendMode blending;
 	bool depthWrite;
 	CullMode culling;
-	bool alphaTest;
 
 	Material(Stream *stream);
 	virtual ~Material();

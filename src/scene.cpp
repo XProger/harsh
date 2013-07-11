@@ -250,7 +250,7 @@ Mesh::~Mesh() {
 
 void Mesh::render() {
 	if (!res || !res->valid()) return;
-	Shader::setMatrixModel(matrix);
+	//Shader::setMatrixModel(matrix);
 	if (material->bind())
 		Render::drawTriangles(res->iBuffer, res->vBuffer, 0, res->iCount / 3);
 }
@@ -278,6 +278,8 @@ Scene::~Scene() {
 void Scene::load(const char *name) {
 	Stream *stream = new Stream(Stream::getHash(name));
 
+//	FILE *f = fopen("lm.dat", "wb");
+
 	int count = stream->getInt();
 	while (count > 0) {
 		//	int nodeType = stream->getInt();
@@ -288,13 +290,18 @@ void Scene::load(const char *name) {
 				stream->getCopy(&mesh->rel_bbox, sizeof(mesh->rel_bbox));
 				mesh->matrix = mesh->rel_matrix;
 				mesh->material = new Material(stream);
-
+/*
+				fwrite(&mesh->material->lightMap->res->hash, 4, 1, f);
+				fwrite(&mesh->material->ambientMap->res->hash, 4, 1, f);
+				fwrite(&mesh->material->param, sizeof(vec4) *2, 1, f);
+				*/
 				add(mesh);
 	//			break;
 	//	}
 		count--;
 	}
 
+//	fclose(f);
 	delete stream;
 }
 
@@ -309,7 +316,9 @@ void Scene::checkVisible() {
 void Scene::render() {
 	Render::setShader(NULL);
 	camera->setup();
+
 	Shader::setMatrixViewProj(Render::params.mViewProj);
+	Shader::setMatrixModel(matrix);
 
 	checkVisible();
 
@@ -325,8 +334,10 @@ void Scene::render() {
 
 //	Render::mode = RENDER_OPAQUE;
 	Render::statSetTex = 0;
+	Render::statTriCount = 0;
     SceneNode::render();
 //	LOG("%d\n", Render::statSetTex);
+//	LOG("%d\n", Render::statTriCount);
 
 //	Render::mode = RENDER_OPACITY;
 //    SceneNode::render();

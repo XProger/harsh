@@ -84,10 +84,14 @@ public:
 	static int packFilesCount;
 	static PackFile *packFiles;
 	static FILE *f;
+	static int packOffset;
 	static void init(const char *packName);
 	static void deinit();
 	static int getFileOffset(unsigned int hash, int *size);
 	static unsigned int getHash(const char *name);
+
+	static int packSet;
+
 
 	Stream(unsigned int hash);
 	Stream(void *_ptr, int _size);
@@ -631,5 +635,9 @@ public:
         // TODO
     }
 };
+
+#define lzo_bytep	unsigned char*
+#define lzo_voidp	void*
+int lzo_decompress(const lzo_bytep in, int in_len, lzo_bytep out);
 
 #endif // UTILS_H

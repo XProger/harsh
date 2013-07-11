@@ -1,7 +1,6 @@
 #include "core.h"
 #include "render.h"
 #include "resource.h"
-#include "tinf.h"
 #include "scene.h"
 
 //{ Input ---------------------------------------------
@@ -40,7 +39,6 @@ Game	*Core::game;
 void Core::init(const char *path, getTimePtr getTime) {
 	LOG("Core::init\n");
     Core::getTime = getTime;
-    tinf_init();
     Stream::init(path);
     Render::init();
     Resource::init();

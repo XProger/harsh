@@ -141,14 +141,17 @@ protected:
     static BlendMode m_blending;
 	static CullMode m_culling;
 	static bool m_depthWrite, m_depthTest, m_alphaTest;
+	static int m_active_texture;
 public:
-	static int statSetTex;
+	static int statSetTex, statTriCount;
 #ifdef S3D
 	static AS3::ui::flash::display::Stage stage;
 	static AS3::ui::flash::display::Stage3D stage3D;
 	static AS3::ui::flash::display3D::Context3D context3D;
 #endif
-    static RenderParams params;
+	static void *m_vbuffer, *m_ibuffer;
+
+	static RenderParams params;
     static void *activeTexture[8];
     static void *activeShader;
     static int width, height;

@@ -49,11 +49,26 @@ void Resource::invalidate() {
 }
 
 void Resource::loading() {
+
+	int t = Core::getTime();
+	Stream::packSet = 0;
+#ifdef RES_LIST
+	FILE *f = fopen("pack.list", "wb");
+#endif
 	Resource* r = (Resource*)list->first;
 	while (r) {
 		r->valid();
+	#ifdef RES_LIST
+		if (f) fwrite(&r->hash, 4, 1, f);
+	#endif
 		r = (Resource*)r->next;
-	}	
+	}
+#ifdef RES_LIST
+	if (f) fclose(f);
+#endif
+	
+	LOG("loading: %d ms\n", Core::getTime() - t);
+	LOG("pack seek: %d times\n", Stream::packSet);
 }
 
 void Resource::check(bool forceFree) {
@@ -188,6 +203,7 @@ bool Shader::states[SP_MAX];
 void ShaderRes::load(Stream *stream) {
 	Render::freeShader(&obj);
 	obj = Render::createShader(stream->getData(stream->size));
+	for (int i = 0; i < SP_MAX; i++) index[i] = -1;
 	m_valid = obj != NULL;
 }
 
@@ -201,15 +217,13 @@ bool Shader::bind() {
 			if (states[i]) {
                 const ShaderParamInfo &p = SHADER_PARAM_INFO[i];
 				if (p.ptr)
-					Render::setShaderUniform(p.type, p.count, p.ptr, p.name, index[i]);
+					Render::setShaderUniform(p.type, p.count, p.ptr, p.name, res->index[i]);
                 states[i] = false;
 			}
 
         return true;
-    } else {
-		LOG("fuck shader\n");
-        return false;
-	}
+    }
+	return false;
 }
 
 void Shader::setParam(ShaderParam param, const void *value) {
@@ -220,7 +234,7 @@ void Shader::setParam(ShaderParam param, const void *value) {
 
 void Shader::setParam(ShaderParam param, const void *value, int count) {
 	const ShaderParamInfo &p = SHADER_PARAM_INFO[param];
-    Render::setShaderUniform(p.type, count, value, p.name, index[param]);
+    Render::setShaderUniform(p.type, count, value, p.name, res->index[param]);
 }
 //}
 
@@ -228,14 +242,12 @@ void Shader::setParam(ShaderParam param, const void *value, int count) {
 Material::Material(Stream *stream) {
 	blending	= (BlendMode)stream->getInt();
 	depthWrite	= stream->getInt() != 0;
-	culling		= (CullMode)stream->getInt();
-	alphaTest	= stream->getInt() != 0;
+	culling		= (CullMode)stream->getInt();	
 	shader		= new Shader(0, stream->getInt());
 	Hash h;
 	diffuse		= (h = stream->getInt()) ? new Texture(NULL, h) : NULL;
 	mask		= (h = stream->getInt()) ? new Texture(NULL, h) : NULL;
 	lightMap	= (h = stream->getInt()) ? new Texture(NULL, h) : NULL;
-	ambientMap	= (h = stream->getInt()) ? new Texture(NULL, h) : NULL;
 	stream->getCopy(&param, sizeof(param));
 }
 
@@ -244,7 +256,6 @@ Material::~Material() {
 	delete diffuse;
 	delete mask;
 	delete lightMap;
-	delete ambientMap;
 }
 
 bool Material::bind() {
@@ -256,9 +267,8 @@ bool Material::bind() {
 		return false;
 	if (lightMap && !lightMap->bind(2))
 		return false;
-	if (ambientMap && !ambientMap->bind(3))
-		return false;
-	shader->setParam(spLMap, &param, 2);	
+	
+	shader->setParam(spLMap, &param, 1);	
 	Render::setBlending(blending);
 	Render::setCulling(culling);
 	Render::setDepthWrite(depthWrite);
