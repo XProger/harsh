@@ -23,7 +23,6 @@
 		99658600160A3C960097B128 /* data.jet in Resources */ = {isa = PBXBuildFile; fileRef = 996585FF160A3C960097B128 /* data.jet */; };
 		99C2D3C6178B2D1D002E6F09 /* renderGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 99C2D3C2178B2D1D002E6F09 /* renderGL.cpp */; };
 		99C2D3C7178B2D1D002E6F09 /* scene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 99C2D3C3178B2D1D002E6F09 /* scene.cpp */; };
-		99C2D3C8178B2D1D002E6F09 /* tinf.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 99C2D3C5178B2D1D002E6F09 /* tinf.cpp */; };
 		99C2D3CA178B2DAA002E6F09 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 99C2D3C9178B2DAA002E6F09 /* Default-568h@2x.png */; };
 		99C2D3CE178B2DCE002E6F09 /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 99C2D3CD178B2DCE002E6F09 /* icon.png */; };
 /* End PBXBuildFile section */
@@ -49,7 +48,6 @@
 		996585DC160A3AC50097B128 /* render.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = render.h; sourceTree = "<group>"; };
 		996585DD160A3AC50097B128 /* resource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = resource.cpp; sourceTree = "<group>"; };
 		996585DE160A3AC50097B128 /* resource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = resource.h; sourceTree = "<group>"; };
-		996585E8160A3AC50097B128 /* tinf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tinf.h; sourceTree = "<group>"; };
 		996585E9160A3AC50097B128 /* utils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = utils.cpp; sourceTree = "<group>"; };
 		996585EA160A3AC50097B128 /* utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = utils.h; sourceTree = "<group>"; };
 		996585FA160A3B500097B128 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
@@ -58,7 +56,6 @@
 		99C2D3C2178B2D1D002E6F09 /* renderGL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = renderGL.cpp; sourceTree = "<group>"; };
 		99C2D3C3178B2D1D002E6F09 /* scene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = scene.cpp; sourceTree = "<group>"; };
 		99C2D3C4178B2D1D002E6F09 /* scene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scene.h; sourceTree = "<group>"; };
-		99C2D3C5178B2D1D002E6F09 /* tinf.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tinf.cpp; sourceTree = "<group>"; };
 		99C2D3C9178B2DAA002E6F09 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-568h@2x.png"; path = "../Default-568h@2x.png"; sourceTree = "<group>"; };
 		99C2D3CD178B2DCE002E6F09 /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = icon.png; path = ../icon.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -142,7 +139,6 @@
 				99C2D3C2178B2D1D002E6F09 /* renderGL.cpp */,
 				99C2D3C3178B2D1D002E6F09 /* scene.cpp */,
 				99C2D3C4178B2D1D002E6F09 /* scene.h */,
-				99C2D3C5178B2D1D002E6F09 /* tinf.cpp */,
 				996585CE160A3AC50097B128 /* core.cpp */,
 				996585CF160A3AC50097B128 /* core.h */,
 				996585D0160A3AC50097B128 /* game.cpp */,
@@ -150,7 +146,6 @@
 				996585DC160A3AC50097B128 /* render.h */,
 				996585DD160A3AC50097B128 /* resource.cpp */,
 				996585DE160A3AC50097B128 /* resource.h */,
-				996585E8160A3AC50097B128 /* tinf.h */,
 				996585E9160A3AC50097B128 /* utils.cpp */,
 				996585EA160A3AC50097B128 /* utils.h */,
 			);
@@ -239,7 +234,6 @@
 				996585F9160A3AC50097B128 /* utils.cpp in Sources */,
 				99C2D3C6178B2D1D002E6F09 /* renderGL.cpp in Sources */,
 				99C2D3C7178B2D1D002E6F09 /* scene.cpp in Sources */,
-				99C2D3C8178B2D1D002E6F09 /* tinf.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
