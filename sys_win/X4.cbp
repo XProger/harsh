@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="X4" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/X4" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="bin/" />
+				<Option object_output="bin/obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+					<Add directory="../src/" />
+				</Compiler>
+				<Linker>
+					<Add library="opengl32" />
+					<Add library="gdi32" />
+					<Add library="winmm" />
+					<Add library="WSock32" />
+				</Linker>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/X4" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="bin/" />
+				<Option object_output="bin/obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-Os" />
+					<Add option="-O3" />
+					<Add directory="../src/" />
+					<Add directory="D:/my_projects/X4/tmp/bullet/bullet-2.81-rev2613/src" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add library="opengl32" />
+					<Add library="gdi32" />
+					<Add library="winmm" />
+					<Add library="WSock32" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add option="-fexceptions" />
+		</Compiler>
+		<Unit filename="../src/core.cpp" />
+		<Unit filename="../src/core.h" />
+		<Unit filename="../src/game.cpp" />
+		<Unit filename="../src/game.h" />
+		<Unit filename="../src/objects.cpp" />
+		<Unit filename="../src/objects.h" />
+		<Unit filename="../src/physic.cpp" />
+		<Unit filename="../src/physic.h" />
+		<Unit filename="../src/render.h" />
+		<Unit filename="../src/renderGL.cpp" />
+		<Unit filename="../src/resource.cpp" />
+		<Unit filename="../src/resource.h" />
+		<Unit filename="../src/scene.cpp" />
+		<Unit filename="../src/scene.h" />
+		<Unit filename="../src/tinf.cpp" />
+		<Unit filename="../src/tinf.h" />
+		<Unit filename="../src/utils.cpp" />
+		<Unit filename="../src/utils.h" />
+		<Unit filename="main.cpp" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+			<DoxyBlocks>
+				<comment_style block="0" line="0" />
+				<doxyfile_project />
+				<doxyfile_build />
+				<doxyfile_warnings />
+				<doxyfile_output />
+				<doxyfile_dot />
+				<general />
+			</DoxyBlocks>
+			<envvars />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
