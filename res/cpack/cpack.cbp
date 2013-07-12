@@ -5,6 +5,7 @@
 		<Option title="cpack" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
+		<Option virtualFolders="lzo\;" />
 		<Build>
 			<Target title="Debug">
 				<Option output="../cpack" prefix_auto="1" extension_auto="1" />
@@ -14,7 +15,7 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-g" />
-					<Add directory="F:/Projects/LST/X4/res/cpack/" />
+					<Add directory="../cpack" />
 				</Compiler>
 			</Target>
 			<Target title="Release">
@@ -25,7 +26,7 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O2" />
-					<Add directory="F:/Projects/LST/X4/res/cpack/" />
+					<Add directory="../cpack" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -36,14 +37,38 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
+		<Unit filename="lzo/config1x.h">
+			<Option virtualFolder="lzo/" />
+		</Unit>
+		<Unit filename="lzo/lzo1x.h">
+			<Option virtualFolder="lzo/" />
+		</Unit>
 		<Unit filename="lzo/lzo1x_9x.c">
 			<Option compilerVar="CC" />
+			<Option virtualFolder="lzo/" />
 		</Unit>
 		<Unit filename="lzo/lzo1x_o.c">
 			<Option compilerVar="CC" />
+			<Option virtualFolder="lzo/" />
+		</Unit>
+		<Unit filename="lzo/lzo_conf.h">
+			<Option virtualFolder="lzo/" />
 		</Unit>
 		<Unit filename="lzo/lzo_init.c">
 			<Option compilerVar="CC" />
+			<Option virtualFolder="lzo/" />
+		</Unit>
+		<Unit filename="lzo/lzo_ptr.h">
+			<Option virtualFolder="lzo/" />
+		</Unit>
+		<Unit filename="lzo/lzoconf.h">
+			<Option virtualFolder="lzo/" />
+		</Unit>
+		<Unit filename="lzo/lzodefs.h">
+			<Option virtualFolder="lzo/" />
+		</Unit>
+		<Unit filename="lzo/miniacc.h">
+			<Option virtualFolder="lzo/" />
 		</Unit>
 		<Unit filename="main.cpp" />
 		<Extensions>
