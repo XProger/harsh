@@ -100,12 +100,12 @@ bool Resource::valid() {
 
 //{ Texture
 void TextureRes::load(Stream *stream) {
-	Render::freeTexture(&obj);
-
+	Render::freeTexture(obj);
+	LOG("loading texture res\n");
     if (!stream) {
         MipMap m = { NULL, width, height, width * height * 4 };
         obj = Render::createTexture(TEX_RGBA8, &m, 1);
-        m_valid = obj != NULL;
+        m_valid = obj != NULL_OBJ;
         return;
     }
 
@@ -177,7 +177,8 @@ void TextureRes::load(Stream *stream) {
 	obj = Render::createTexture(fmt->texFormat, mipMaps, mipCount);
 
 	delete mipMaps;
-    m_valid = obj != NULL;
+    m_valid = obj != NULL_OBJ;
+	LOG("ok\n");
 }
 
 TextureRes* TextureRes::create(int width, int height) {
@@ -187,14 +188,17 @@ TextureRes* TextureRes::create(int width, int height) {
     return tex;
 }
 
+Hash EXCLUDE_TEX1 = Stream::getHash("texture/tube1_c.pvr");
+Hash EXCLUDE_TEX2 = Stream::getHash("texture/LL1_c.pvr");
+
 bool Texture::bind(int sampler) {
     if (res && res->valid()) {
+		if (EXCLUDE_TEX1 == res->hash || EXCLUDE_TEX2 == res->hash)
+			return false;
         Render::setTexture(res->obj, sampler);
         return true;
-    } else {
-		LOG("fuck texture\n");
-        return false;
-	}
+    }
+	return false;	
 }
 //}
 
@@ -202,10 +206,12 @@ bool Texture::bind(int sampler) {
 bool Shader::states[SP_MAX];
 
 void ShaderRes::load(Stream *stream) {
-	Render::freeShader(&obj);
+	LOG("loading shader res\n");
+	Render::freeShader(obj);
 	obj = Render::createShader(stream->getData(stream->size));
 	for (int i = 0; i < SP_MAX; i++) index[i] = -1;
-	m_valid = obj != NULL;
+	m_valid = obj != NULL_OBJ;
+	LOG("ok\n");
 }
 
 bool Shader::bind() {
@@ -244,12 +250,17 @@ Material::Material(Stream *stream) {
 	blending	= (BlendMode)stream->getInt();
 	depthWrite	= stream->getInt() != 0;
 	culling		= (CullMode)stream->getInt();	
+	LOG("load shader\n");
 	shader		= new Shader(0, stream->getInt());
 	Hash h;
+	LOG("load diffuse\n");
 	diffuse		= (h = stream->getInt()) ? new Texture(NULL, h) : NULL;
+	LOG("load mask\n");
 	mask		= (h = stream->getInt()) ? new Texture(NULL, h) : NULL;
+	LOG("load lightmap\n");
 	lightMap	= (h = stream->getInt()) ? new Texture(NULL, h) : NULL;
 	stream->getCopy(&param, sizeof(param));
+LOG("ok\n");
 }
 
 Material::~Material() {
@@ -321,55 +332,39 @@ bool Material::bind() {
 
 //{ Mesh Resource
 void MeshRes::load(Stream *stream) {	
+	LOG("loading mesh res\n");
 	if (vData && iData) {
 		delete vBuffer;
 		delete iBuffer;
-		vBuffer = new VertexBuffer(vData, vCount, VF_P3BNTT);
-		iBuffer = new IndexBuffer(iData, iCount);
+		vBuffer = new VertexBuffer(vData, vCount, vFormat);
+		iBuffer = new IndexBuffer(iData, iCount, iFormat);
 	} else {
-		/*
-		stream->pos += 28; // BBox (24), Mode, Attrib, align, align
-
-	// joints
-		jCount  = stream->getInt();
-		if (jCount) {
-	//		jointHash = new JointHash[jCount];
-	//		stream->getCopy(jointHash, jCount * sizeof(JointHash));
-			stream->pos += jCount * 4;
-		}
-		*/
 	// vertex buffer
 		vCount  = stream->getInt();
 		iCount  = stream->getInt();
-
-		int vStride = sizeof(Vertex_P3BNTT); //stream->getInt();
-		vBuffer = new VertexBuffer(stream->getData(vCount * vStride), vCount, VF_P3BNTT);
-
-//		LOG("%d \n", stream->pos);
-
-	// index buffer
-//		iCount  = stream->getInt();
-//		stream->getInt();
-		iBuffer = new IndexBuffer(stream->getData(iCount * 2), iCount);
-
-//		LOG("jCount:  %d\n", jCount);
-//		LOG("vCount:  %d\n", vCount);
-//		LOG("vStride: %d\n", vStride);
-//		LOG("iCount:  %d\n", iCount);
+		vFormat	= (VertexFormat)stream->getInt();
+		iFormat = (IndexFormat)stream->getInt();
+		LOG("vCount:%d iCount:%d vFormat:%d iFormat:%d\n", vCount, iCount, vFormat, iFormat);
+		vBuffer = new VertexBuffer(stream->getData(vCount * VertexStride[vFormat]), vCount, vFormat);
+		LOG("upload index buffer\n");
+		iBuffer = new IndexBuffer(stream->getData(iCount * IndexStride[iFormat]), iCount, iFormat);
+		LOG("uploaded\n");
 	}
 //	LOG("mesh i:%d\tv:%d\n", iCount, vCount);
 	m_valid = true;
+	LOG("ok\n");
 }
 
-MeshRes* MeshRes::create(VertexFormat format, void *vert, int vCount, void *idx, int iCount) {
+MeshRes* MeshRes::create(IndexFormat iFormat, VertexFormat vFormat, void *idx, void *vert, int iCount, int vCount) {
 	MeshRes *res = new MeshRes(0);
-	res->jCount = 0;
 	res->vCount = vCount;
 	res->iCount = iCount;
-	res->vData = new char[vCount * VertexStride[format]];
-	memcpy(res->vData, vert, vCount * VertexStride[format]);
-	res->iData = new char(iCount * 2);
-	memcpy(res->iData, idx, iCount * 2);
+	res->vFormat = vFormat;
+	res->iFormat = iFormat;
+	res->vData = new char[vCount * VertexStride[vFormat]];
+	memcpy(res->vData, vert, vCount * VertexStride[vFormat]);
+	res->iData = new char(iCount * IndexStride[iFormat]);
+	memcpy(res->iData, idx, iCount * IndexStride[iFormat]);
 	return res;
 }
 

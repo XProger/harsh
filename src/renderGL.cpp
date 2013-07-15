@@ -2,36 +2,10 @@
 
 #ifdef OGL
 
-#ifdef __APPLE__
-	#include "TargetConditionals.h"
-
-	#ifdef TARGET_OS_IPHONE
-    	#include <OpenGLES/ES2/gl.h>
-		#include <OpenGLES/ES2/glext.h>
-
-		#define GL_ALPHA8 GL_ALPHA
-		#define GL_RGBA8 GL_RGBA8_OES
-    	#define GL_LUMINANCE8 GL_LUMINANCE
-    	#define GL_LUMINANCE8_ALPHA8 GL_LUMINANCE_ALPHA
-	#endif
-
-#endif
-
-#ifdef ANDROID
-	#include <GLES2/gl2.h>
-	#include <GLES2/gl2ext.h>
-
-	#define GL_ALPHA8 GL_ALPHA
-	#define GL_RGBA8 GL_RGBA
-	#define GL_LUMINANCE8 GL_LUMINANCE
-	#define GL_LUMINANCE8_ALPHA8 GL_LUMINANCE_ALPHA
-#endif
-
 #ifdef WIN32
 	#include <cstdio>
 	#include <windows.h>
-	#include <GL/gl.h>
-	#include <GL/glext.h>   // http://www.opengl.org/registry/api/GL/glext.h (!!!)
+
 
 	void* _GetProcAddress(const char *name) {
 		void* ptr = (void*)wglGetProcAddress(name);
@@ -102,16 +76,16 @@
 // ETC
 #define GL_ETC1_RGB8_OES					0x8D64
 
-BlendMode Render::m_blending;
-CullMode Render::m_culling;
-bool Render::m_depthWrite, Render::m_depthTest, Render::m_alphaTest;
-int Render::m_active_texture;
-int Render::width, Render::height;
-void *Render::activeTexture[8];
-void *Render::activeShader;
-RenderParams Render::params;
-int Render::statSetTex, Render::statTriCount;
-void *Render::m_vbuffer, *Render::m_ibuffer;
+BlendMode		Render::m_blending;
+CullMode		Render::m_culling;
+bool			Render::m_depthWrite, Render::m_depthTest, Render::m_alphaTest;
+int				Render::width, Render::height, Render::m_active_sampler;
+TextureObj		Render::m_active_texture[8];
+ShaderObj		Render::m_active_shader;
+RenderParams	Render::params;
+int				Render::statSetTex, Render::statTriCount;
+VertexBuffer	*Render::m_vbuffer;
+IndexBuffer		*Render::m_ibuffer;
 
 GLuint renderTarget = 0;
 GLint renderTargetOld = 0;
@@ -146,10 +120,10 @@ void shaderAttach(GLenum type, GLuint &ID, const char *code) {
 }
 
 // IndexBuffer -----------------------------------------------
-IndexBuffer::IndexBuffer(void *data, int count) : count(count) {
-	glGenBuffers(1, (GLuint*)&obj);
+IndexBuffer::IndexBuffer(void *data, int count, IndexFormat format) : count(count), format(format) {
+	glGenBuffers(1, &obj);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (GLuint)obj);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(short), data, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * IndexStride[format], data, GL_STATIC_DRAW);
 }
 
 IndexBuffer::~IndexBuffer() {
@@ -157,52 +131,44 @@ IndexBuffer::~IndexBuffer() {
 }
 
 void IndexBuffer::bind() {
-	if (Render::m_ibuffer != obj) {
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (GLuint)obj);
-		Render::m_ibuffer = obj;
-	}
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (GLuint)obj);
 }
 
 // VertexBuffer ----------------------------------------------
 VertexBuffer::VertexBuffer(void *data, int count, VertexFormat format) : count(count), format(format) {
-	glGenBuffers(1, (GLuint*)&obj);
+	glGenBuffers(1, &obj);
 	glBindBuffer(GL_ARRAY_BUFFER, (GLuint)obj);
 	glBufferData(GL_ARRAY_BUFFER, count * VertexStride[format], data, GL_STATIC_DRAW);
 }
 
 VertexBuffer::~VertexBuffer() {
-	glDeleteBuffers(1, (GLuint*)&obj);
+	glDeleteBuffers(1, &obj);
 }
 
 void VertexBuffer::bind() {
-	if (Render::m_vbuffer != obj) {
-		glBindBuffer(GL_ARRAY_BUFFER, (GLuint)obj);
-		Render::m_vbuffer = obj;
-	}
-	Vertex_P2T2 *vP2T2 = NULL;
-	Vertex_P3NT *vP3NT = NULL;
-	Vertex_P3NT_RAW *vP3NTr = NULL;
-	Vertex_P3BNTT *vP3BNTT = NULL;
+	glBindBuffer(GL_ARRAY_BUFFER, obj);
+
+	Vertex_PT22		*vPT22 = NULL;
+	Vertex_PT32		*vPT32 = NULL;
+	Vertex_PT34		*vPT34 = NULL;
+	Vertex_PT34s	*vPT34s = NULL;
 
 	switch (format) {
-		case VF_P2T2 :
-			glVertexAttribPointer(vaTexCoord0, 2, GL_FLOAT, false, VertexStride[format], &vP2T2->tc);
-			glVertexAttribPointer(vaCoord, 2, GL_FLOAT, false, VertexStride[format], &vP2T2->pos);
+		case VF_PT22 :
+			glVertexAttribPointer(vaTexCoord0, 2, GL_FLOAT, false, VertexStride[format], &vPT22->tc);
+			glVertexAttribPointer(vaCoord, 2, GL_FLOAT, false, VertexStride[format], &vPT22->pos);
 			break;
-		case VF_P3NT :
-			glVertexAttribPointer(vaNormal, 4, GL_UNSIGNED_BYTE, true, VertexStride[format], &vP3NT->normal);
-			glVertexAttribPointer(vaTexCoord0, 2, GL_SHORT, false, VertexStride[format], &vP3NT->tc);
-			glVertexAttribPointer(vaCoord, 3, GL_FLOAT, false, VertexStride[format], &vP3NT->pos);
+		case VF_PT32 :
+			glVertexAttribPointer(vaTexCoord0, 2, GL_FLOAT, false, VertexStride[format], &vPT32->tc);
+			glVertexAttribPointer(vaCoord, 3, GL_FLOAT, false, VertexStride[format], &vPT32->pos);
 			break;
-		case VF_P3NT_RAW :
-			glVertexAttribPointer(vaNormal, 3, GL_FLOAT, false, VertexStride[format], &vP3NTr->normal);
-			glVertexAttribPointer(vaTexCoord0, 2, GL_FLOAT, false, VertexStride[format], &vP3NTr->tc);
-			glVertexAttribPointer(vaCoord, 3, GL_FLOAT, false, VertexStride[format], &vP3NTr->pos);
+		case VF_PT34 :
+			glVertexAttribPointer(vaTexCoord0, 4, GL_FLOAT, false, VertexStride[format], &vPT34->tc);
+			glVertexAttribPointer(vaCoord, 3, GL_FLOAT, false, VertexStride[format], &vPT34->pos);
 			break;
-		case VF_P3BNTT :
-			//glVertexAttribPointer(vaNormal, 3, GL_FLOAT, false, VertexStride[format], &vP3NTr->normal);
-			glVertexAttribPointer(vaTexCoord0, 4, GL_SHORT, false, VertexStride[format], &vP3BNTT->tc);
-			glVertexAttribPointer(vaCoord, 3, GL_FLOAT, false, VertexStride[format], &vP3BNTT->pos);
+		case VF_PT34s :
+			glVertexAttribPointer(vaTexCoord0, 4, GL_SHORT, false, VertexStride[format], &vPT34s->tc);
+			glVertexAttribPointer(vaCoord, 3, GL_FLOAT, false, VertexStride[format], &vPT34s->pos);
 			break;
 		default :
 			return;
@@ -275,7 +241,6 @@ void Render::resetStates() {
 	glEnableVertexAttribArray(vaCoord);
 	glEnableVertexAttribArray(vaTexCoord0);
 
-
 	setCulling(CULL_NONE);
 	setCulling(CULL_BACK);
 	setBlending(BLEND_NONE);
@@ -285,9 +250,10 @@ void Render::resetStates() {
 	setDepthWrite(false);
 	setDepthWrite(true);
 	for (int i = 0; i < 8; i++)
-		activeTexture[i] = NULL;
-	activeShader = NULL;
-	m_vbuffer = m_ibuffer = NULL;
+		m_active_texture[i] = NULL_OBJ;
+	m_active_shader = NULL_OBJ;
+	m_vbuffer = NULL;
+	m_ibuffer = NULL;
 	setViewport(0, 0, width, height);
 }
 
@@ -308,7 +274,7 @@ void Render::clear(ClearMask clearMask, float r, float g, float b, float a) {
 	}
 }
 
-void* Render::createTexture(TexFormat texFormat, MipMap *mipMaps, int mipCount) {
+TextureObj Render::createTexture(TexFormat texFormat, MipMap *mipMaps, int mipCount) {
 	struct FormatInfo {
         int iformat, eformat, type;
 	} info[] = {
@@ -326,13 +292,10 @@ void* Render::createTexture(TexFormat texFormat, MipMap *mipMaps, int mipCount) 
 		{GL_ETC1_RGB8_OES,					GL_FALSE,			GL_FALSE},
 	};
 
-	GLenum oldID;
-	glGetIntegerv(GL_TEXTURE_BINDING_2D, (GLint*)&oldID);
+	GLuint ID;
 
-	GLuint *ID = new GLuint(0);
-
-	glGenTextures(1, ID);
-	glBindTexture(GL_TEXTURE_2D, *ID);
+	glGenTextures(1, &ID);
+	glBindTexture(GL_TEXTURE_2D, ID);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mipCount > 1 ? GL_LINEAR_MIPMAP_NEAREST : GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	
@@ -353,34 +316,31 @@ void* Render::createTexture(TexFormat texFormat, MipMap *mipMaps, int mipCount) 
 			glTexImage2D(GL_TEXTURE_2D, i, fmt.iformat, m.width, m.height, 0, fmt.eformat, fmt.type, m.data);
 	}
 
-	glBindTexture(GL_TEXTURE_2D, oldID);
-
 	return ID;
 }
 
-void* Render::createShader(void *data) {
-	GLuint *ID = new GLuint(0);
-	*ID = glCreateProgram();
-	shaderAttach(GL_VERTEX_SHADER, *ID, (char*)data);
-	shaderAttach(GL_FRAGMENT_SHADER, *ID, (char*)data);
+ShaderObj Render::createShader(void *data) {
+	GLuint ID = glCreateProgram();
+	shaderAttach(GL_VERTEX_SHADER, ID, (char*)data);
+	shaderAttach(GL_FRAGMENT_SHADER, ID, (char*)data);
 
 // bind vertex attributes
-	glBindAttribLocation(*ID, vaCoord, "aCoord");
-	glBindAttribLocation(*ID, vaNormal, "aNormal");
-	glBindAttribLocation(*ID, vaTexCoord0, "aTexCoord0");
-	glBindAttribLocation(*ID, vaTexCoord1, "aTexCoord1");
+	glBindAttribLocation(ID, vaCoord, "aCoord");
+	glBindAttribLocation(ID, vaNormal, "aNormal");
+	glBindAttribLocation(ID, vaTexCoord0, "aTexCoord0");
+	glBindAttribLocation(ID, vaTexCoord1, "aTexCoord1");
 
-	glLinkProgram(*ID);
+	glLinkProgram(ID);
 	GLint status;
-	glGetProgramiv(*ID, GL_LINK_STATUS, &status);
+	glGetProgramiv(ID, GL_LINK_STATUS, &status);
 	if (status != 1)
-		shaderCheck(*ID, true);
+		shaderCheck(ID, true);
 
 // init samplers
 	Render::setShader(ID);
 	const char *samplers[] = {"sDiffuse", "sMask", "sLight"};
 	for (int i = 0; i < 3; i++)
-		glUniform1iv(glGetUniformLocation(*ID, samplers[i]), 1, &i);
+		glUniform1iv(glGetUniformLocation(ID, samplers[i]), 1, &i);
 
 	return ID;
 }
@@ -445,29 +405,29 @@ void Render::setDepthTest(bool value) {
 	m_depthTest = value;
 }
 
-void Render::setTexture(void *obj, int sampler) {
-    if (activeTexture[sampler] != obj) {
+void Render::setTexture(TextureObj obj, int sampler) {
+    if (m_active_texture[sampler] != obj) {
 		statSetTex++;
-		activeTexture[sampler] = obj;
-		if (m_active_texture != sampler) {
+		m_active_texture[sampler] = obj;
+		if (m_active_sampler != sampler) {
 			glActiveTexture(GL_TEXTURE0 + sampler);
-			m_active_texture = sampler;
+			m_active_sampler = sampler;
 		}
-        glBindTexture(GL_TEXTURE_2D, obj ? *(GLuint*)obj : 0);
+        glBindTexture(GL_TEXTURE_2D, obj ? obj : 0);
     }
 }
 
-bool Render::setShader(void *obj) {
-	if (activeShader != obj) {
-		activeShader = obj;
-		glUseProgram(obj ? *(GLuint*)obj : 0);
+bool Render::setShader(ShaderObj obj) {
+	if (m_active_shader != obj) {
+		m_active_shader = obj;
+		glUseProgram(obj ? obj : 0);
 		return true;
 	}
 	return false;
 }
 
 void Render::setShaderUniform(UniformType type, int count, const void *value, const char *name, int &index) {
-	if (!activeShader || (index == -1 && (index = glGetUniformLocation(*(GLuint*)activeShader, name)) == -1))
+	if (index == -1 && (index = glGetUniformLocation(m_active_shader, name)) == -1)
 		return;
 
 	switch (type) {
@@ -481,24 +441,21 @@ void Render::setShaderUniform(UniformType type, int count, const void *value, co
 	}
 }
 
-void Render::freeTexture(void **obj) {
-	if (!obj || !*obj) return;
-	glDeleteTextures(1, (GLuint*)(*obj));
-	delete (GLuint*)*obj;
-	*obj = NULL;
+void Render::freeTexture(TextureObj obj) {
+	if (obj) glDeleteTextures(1, &obj);
 }
 
-void Render::freeShader(void **obj) {
-	if (!obj || !*obj) return;
-	glDeleteProgram(*(GLuint*)(*obj));
-	delete (GLuint*)*obj;
-	*obj = NULL;
+void Render::freeShader(ShaderObj obj) {
+	if (obj) glDeleteProgram(obj);
 }
 
 void Render::drawTriangles(IndexBuffer *iBuffer, VertexBuffer *vBuffer, int indexFirst, int triCount) {
-	iBuffer->bind();
-	vBuffer->bind();
-	glDrawElements(GL_TRIANGLES, triCount * 3, GL_UNSIGNED_SHORT, (GLvoid*)(indexFirst * sizeof(short)));
+	if (m_ibuffer != iBuffer) { iBuffer->bind(); m_ibuffer = iBuffer; };
+	if (m_vbuffer != vBuffer) { vBuffer->bind(); m_vbuffer = vBuffer; };
+	
+	const int iFormatGL[3] = {GL_UNSIGNED_BYTE, GL_UNSIGNED_SHORT, GL_UNSIGNED_INT};
+
+	glDrawElements(GL_TRIANGLES, triCount * 3, iFormatGL[iBuffer->format], (GLvoid*)(indexFirst * sizeof(short)));
 	statTriCount += triCount;
 }
 #endif // #ifdef OGL

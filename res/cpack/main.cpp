@@ -16,13 +16,13 @@ void error(const char *text) {
 }
 
 void printProgress(int x, int n, int w, int size) {
-    float ratio = x/(float)n;
-    int   c     = ratio * w;
-    printf(" %3d%% ", (int)(ratio*100));
-    for (int i = 0; i < c; i++) printf("%c", (char)219);
+	float ratio = x/(float)n;
+	int   c     = ratio * w;
+	printf("\r %3d%% ", (int)(ratio*100));
+	for (int i = 0; i < c; i++) printf("%c", (char)219);
 	for (int i = c; i < w; i++) printf("%c", (char)196);
-	printf(" %.2f mb", size / (float)(1024 * 1024) );
-	printf("\r");
+	if (size)
+		printf(" %.2f mb", size / (float)(1024 * 1024) );
 }
 
 LZO_EXTERN(int)
@@ -48,13 +48,13 @@ void compress(const char *_data, int _size, char **_cdata, int *_csize, char *wM
 	lzo_uint best_len = size;
 	int best_lazy = 0;
 	lzo_uint out_len = 0;
-    for (int i = 0; i < 6; i++) {
-        lzo1x_999_compress_internal(data, size, cdata, &out_len, wMem, NULL, 0, 0, i, 65536L, 65536L, 65536L, 65536L, 0x1);
-        if (out_len < best_len) {
-            best_len = out_len;
-            best_lazy = i;
-        }
-    }
+	for (int i = 0; i < 6; i++) {
+		lzo1x_999_compress_internal(data, size, cdata, &out_len, wMem, NULL, 0, 0, i, 65536L, 65536L, 65536L, 65536L, 0x1);
+		if (out_len < best_len) {
+			best_len = out_len;
+			best_lazy = i;
+		}
+	}
 
 	if (out_len < size) {
 		lzo1x_999_compress_internal(data, size, cdata, &out_len, wMem, NULL, 0, 0, best_lazy, 65536L, 65536L, 65536L, 65536L, 0x1);
@@ -98,46 +98,57 @@ Hash SFH(const char *data, int len) {
 	Hash hash = len, tmp;
 	int rem;
 
-    if (len <= 0 || data == NULL) return 0;
+	if (len <= 0 || data == NULL) return 0;
 
-    rem = len & 3;
-    len >>= 2;
+	rem = len & 3;
+	len >>= 2;
 
-    for (;len > 0; len--) {
-        hash  += get16bits (data);
-        tmp    = (get16bits (data+2) << 11) ^ hash;
-        hash   = (hash << 16) ^ tmp;
-        data  += 4;
-        hash  += hash >> 11;
-    }
+	for (;len > 0; len--) {
+		hash  += get16bits (data);
+		tmp    = (get16bits (data+2) << 11) ^ hash;
+		hash   = (hash << 16) ^ tmp;
+		data  += 4;
+		hash  += hash >> 11;
+	}
 
-    switch (rem) {
-        case 3: hash += get16bits (data);
-                hash ^= hash << 16;
-                hash ^= data[2] << 18;
-                hash += hash >> 11;
-                break;
-        case 2: hash += get16bits (data);
-                hash ^= hash << 11;
-                hash += hash >> 17;
-                break;
-        case 1: hash += *data;
-                hash ^= hash << 10;
-                hash += hash >> 1;
-    }
+	switch (rem) {
+		case 3: hash += get16bits (data);
+				hash ^= hash << 16;
+				hash ^= data[2] << 18;
+				hash += hash >> 11;
+				break;
+		case 2: hash += get16bits (data);
+				hash ^= hash << 11;
+				hash += hash >> 17;
+				break;
+		case 1: hash += *data;
+				hash ^= hash << 10;
+				hash += hash >> 1;
+	}
 
-    hash ^= hash << 3;
-    hash += hash >> 5;
-    hash ^= hash << 4;
-    hash += hash >> 17;
-    hash ^= hash << 25;
-    hash += hash >> 6;
+	hash ^= hash << 3;
+	hash += hash >> 5;
+	hash ^= hash << 4;
+	hash += hash >> 17;
+	hash ^= hash << 25;
+	hash += hash >> 6;
 
-    return hash;
+	return hash;
 }
 
 Hash getHash(const string &text) {
 	return SFH(text.c_str(), text.size());
+}
+
+void runCmd(const char *cmd, bool show = false) {
+	STARTUPINFO sInfo;
+	PROCESS_INFORMATION pInfo;
+	GetStartupInfo(&sInfo);
+	sInfo.wShowWindow	= show ? SW_SHOW : SW_HIDE;
+	sInfo.dwFlags		= STARTF_USESHOWWINDOW;
+	CreateProcess(0, (LPSTR)cmd, 0, 0, false, CREATE_NEW_CONSOLE, 0, 0, &sInfo, &pInfo);
+	WaitForSingleObject(pInfo.hProcess, INFINITE);
+	CloseHandle(pInfo.hProcess);
 }
 
 struct FileItem {
@@ -228,7 +239,7 @@ void pack(const string &OS, const string &basePath, const string &fileName, bool
 	fseek(f, 4 + hsize, SEEK_SET);
 
 	lzo_init();
-    char *wMem = new char[LZO1X_999_MEM_COMPRESS];
+	char *wMem = new char[LZO1X_999_MEM_COMPRESS];
 
 	int psize = 0;
 	int pcur  = 0;
@@ -290,14 +301,84 @@ void pack(const string &OS, const string &basePath, const string &fileName, bool
 	printf("\n");
 }
 
+void convert(const string &srcDir, const string &dstDir) {
+
+	struct {
+		unsigned int dwHeaderSize;
+		unsigned int dwHeight;
+		unsigned int dwWidth;
+		unsigned int dwMipMapCount;
+		unsigned int dwpfFlags;
+		unsigned int dwDataSize;
+		unsigned int dwBitCount;
+		unsigned int dwMask[4];
+		unsigned int dwPVR;
+		unsigned int dwNumSurfs;
+	} header = { sizeof(header), 0, 0, 0, 0x99, 0, 0, {0,0,0,0}, 0, 1 };
+
+	FileList *list = getFileList("flash", srcDir);
+
+	int psize = 0;
+	int pcur  = 0;
+	int count = list->size();
+	for (int i = 0; i < count; i++)
+		psize += list->at(i)->size;
+
+	printf("convert ATF to PVR...\n");
+	printProgress(pcur, psize, 62, 0);
+
+	FILE *f;
+	char *data = new char[2048 * 2048 * 4];	// max texture size
+	for (int i = 0; i < count; i++) {
+		FileItem *item = list->at(i);
+		string pvrName = dstDir + item->name;
+		pvrName = pvrName.substr(0, pvrName.size() - 3) + "pvr";
+
+		string cmd = "png2atf -c d -i \"" + srcDir + item->name + "\" -o \"" + pvrName + "\"";
+
+		runCmd(cmd.c_str(), false);
+
+		pcur += item->size;
+		f = fopen(pvrName.c_str(), "rb");
+		if (!f) {
+			printf("error: can't open %s", item->name.c_str());
+			continue;
+		}
+
+		fseek(f, 0, SEEK_END);
+		header.dwDataSize = ftell(f);
+		fseek(f, 0, SEEK_SET);
+
+		fread(data, header.dwDataSize, 1, f);
+		fclose(f);
+
+		header.dwHeight		= 1 << data[13];
+		header.dwWidth		= 1 << data[14];
+
+		f = fopen(pvrName.c_str(), "wb");
+		if (!f) {
+			printf("error: can't open %s", item->name.c_str());
+			continue;
+		}
+		fwrite(&header, sizeof(header), 1, f);
+		fwrite(data, header.dwDataSize, 1, f);
+		fclose(f);
+
+		printProgress(pcur, psize, 62, 0);
+	}
+	delete data;
+}
+
 int main(int argc, char *argv[]) {
 
 	//pack("win", "tmp/", "../sys_win/bin/data.jet", true);
-
-	if (argc == 5)
-		pack(argv[1], argv[2], argv[3], argv[4][0] == '1');
+	if (argc == 4)
+		convert(argv[2], argv[3]);
 	else
-		printf("format: cpack win/android/ios resDir packDir 0/1");
+		if (argc == 5)
+			pack(argv[1], argv[2], argv[3], argv[4][0] == '1');
+		else
+			printf("format: cpack win/android/ios resDir packDir 0/1");
 
     return 0;
 }

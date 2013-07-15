@@ -636,6 +636,28 @@ public:
     }
 };
 
+struct String {
+
+	static char* copy(const char *str) {
+		if (!str)
+			return 0;
+		int length = strlen(str);
+		char *res = new char[length + 1];
+		memcpy(res, str, length);
+		res[length] = 0;
+		return res;
+	}
+
+	static int cmp(const char *str1, const char *str2) {
+		return (str1 == 0 && str2 == 0) ? 0 : (str1 == 0 ? -1 : (str2 == 0 ? 1 : strcmp(str1, str2)));
+	}
+
+	static int length(const char *str) {
+		return str ? strlen(str) : 0;
+	}
+};
+
+
 #define lzo_bytep	unsigned char*
 #define lzo_voidp	void*
 int lzo_decompress(const lzo_bytep in, int in_len, lzo_bytep out);

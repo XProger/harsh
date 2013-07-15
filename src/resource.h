@@ -16,9 +16,10 @@ struct Resource : public ListItem {
 //protected:
 	static List *list;
 
-    Hash hash;
-	int ref, time;
-	bool m_valid, deviceReset;
+    Hash	hash;
+	int		ref, time;
+	bool	m_valid, deviceReset;
+
 	virtual void load(Stream *stream) {};
 public:
     Resource(Hash hash, bool deviceReset);
@@ -51,11 +52,11 @@ struct TextureRes : public Resource {
 protected:
 	virtual void load(Stream *stream);
 public:
-    void *obj;
-    int width, height;
+    TextureObj	obj;
+    int			width, height;
 
-	TextureRes(Hash hash) : Resource(hash, true), obj(0), width(0), height(0) {}
-	virtual ~TextureRes() { Render::freeTexture(&obj); }
+	TextureRes(Hash hash) : Resource(hash, true), width(0), height(0) {}
+	virtual ~TextureRes() { Render::freeTexture(obj); }
 
 	static TextureRes* load(const char* name, Hash hash) { return loadRes<TextureRes>(name, hash); }
 	static TextureRes* create(int width, int height);
@@ -75,39 +76,15 @@ public:
 //}
 
 //{ Shader
-struct ShaderParamInfo {
-	UniformType type;
-	const char *name;
-	int size, count;
-	void *ptr;
-};
-
-enum ShaderParam {
-	spMatrixViewProj,
-	spMatrixModel,
-//	spColor,
-//	spLightPos,
-	spLMap,
-	SP_MAX
-};
-
-const ShaderParamInfo SHADER_PARAM_INFO[SP_MAX] = {
-	{utMat4, "uViewProjMatrix", sizeof(mat4), 1, &Render::params.mViewProj},
-	{utMat4, "uModelMatrix", 	sizeof(mat4), 1, &Render::params.mModel},
-//	{utVec4, "uColor", 			sizeof(vec4), 1, &Render::params.color},
-//	{utVec3, "uLightPos", 		sizeof(vec3), 1, &Render::params.light.pos},
-	{utVec4, "uLMap",			sizeof(vec4), 1, NULL},
-};
-
 struct ShaderRes : public Resource {
 protected:
 	virtual void load(Stream *stream);
 public:
-    void *obj;
+    ShaderObj obj;
     int index[SP_MAX];
 
-	ShaderRes(Hash hash) : Resource(hash, true), obj(0) {}
-	virtual ~ShaderRes() { Render::freeShader(&obj); }
+	ShaderRes(Hash hash) : Resource(hash, true) {}
+	virtual ~ShaderRes() { Render::freeShader(obj); }
 
 	static ShaderRes* load(const char* name, Hash hash) { return loadRes<ShaderRes>(name, hash); };
 };
@@ -168,12 +145,12 @@ public:
 */
 
 struct Material {
-	Shader	*shader;
-	Texture	*diffuse, *mask, *lightMap;
-	vec4	param;
-	BlendMode blending;
-	bool depthWrite;
-	CullMode culling;
+	Shader		*shader;
+	Texture		*diffuse, *mask, *lightMap;
+	vec4		param;
+	BlendMode	blending;
+	bool		depthWrite;
+	CullMode	culling;
 
 	Material(Stream *stream);
 	virtual ~Material();
@@ -188,17 +165,16 @@ protected:
 public:
 	VertexBuffer	*vBuffer;
 	IndexBuffer		*iBuffer;
-
-	int jCount, iCount, vCount;
-	char *vData, *iData;
-//	AttribOffsets vOffsets;
-//	JointHash *jointHash;
+	int				iCount, vCount;
+	char			*vData, *iData;
+	IndexFormat		iFormat;
+	VertexFormat	vFormat;
 
 	MeshRes(unsigned int hash) : Resource(hash, true), vBuffer(0), iBuffer(0), vData(0), iData(0) {}
 	virtual ~MeshRes();
 
 	static MeshRes* load(const char* name, unsigned int hash = 0) { return loadRes<MeshRes>(name, hash); };
-	static MeshRes* create(VertexFormat format, void *vert, int vCount, void *idx, int iCount);
+	static MeshRes* create(IndexFormat iFormat, VertexFormat vFormat, void *idx, void *vert, int iCount, int vCount);
 };
 //}
 
@@ -245,11 +221,11 @@ public:
 struct Sound;
 
 struct SoundChannel {
-    IMA_STATE ima[2];
-    int pos;
-    float pan;
-	bool playing;
-	Sound *snd;
+    IMA_STATE	ima[2];
+    int			pos;
+    float		pan;
+	bool		playing;
+	Sound		*snd;
 	SoundChannel **ref;
 
     SoundChannel() : pos(0) {}
