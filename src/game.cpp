@@ -33,7 +33,7 @@ void Game::update() {
 }
 
 void Game::render() {
-	Render::clear(CLEAR_DEPTH, 0.0f, 0.5f, 0.8f, 1.0f);
+	Render::clear(CLEAR_ALL, 0.0f, 0.5f, 0.8f, 1.0f);
 	Core::scene->render();
 }
 

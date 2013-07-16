@@ -186,13 +186,8 @@ TextureRes* TextureRes::create(int width, int height) {
     return tex;
 }
 
-Hash EXCLUDE_TEX1 = Stream::getHash("texture/tube1_c.pvr");
-Hash EXCLUDE_TEX2 = Stream::getHash("texture/LL1_c.pvr");
-
 bool Texture::bind(int sampler) {
     if (res && res->valid()) {
-		if (EXCLUDE_TEX1 == res->hash || EXCLUDE_TEX2 == res->hash)
-			return false;
         Render::setTexture(res->obj, sampler);
         return true;
     }

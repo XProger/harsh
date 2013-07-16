@@ -71,7 +71,7 @@ void VertexBuffer::bind() {
 
 // Render ----------------------------------------------------
 void Render::init() {
-	//
+	resetStates();
 }
 
 void Render::deinit() {
@@ -97,7 +97,7 @@ void Render::resetStates() {
 	setDepthWrite(false);
 	setDepthWrite(true);
 	for (int i = 0; i < 8; i++)
-		m_active_texture[i] = NULL_OBJ;
+		setTexture(NULL_OBJ, i);
 	m_active_shader = NULL_OBJ;
 	m_vbuffer = NULL;
 	m_ibuffer = NULL;
@@ -123,29 +123,17 @@ TextureObj Render::createTexture(TexFormat texFormat, MipMap *mipMaps, int mipCo
 }
 
 ShaderObj Render::createShader(void *data) {
-	LOG("init shader\n");
 	AS3::ui::flash::display3D::Program3D prog = context3D->createProgram();
-/*
+
+	AS3::ui::flash::utils::ByteArray vCode = AS3::ui::flash::utils::ByteArray::_new(),
+									 fCode = AS3::ui::flash::utils::ByteArray::_new();
+
 	int vlen = ((int*)data)[0], flen = ((int*)data)[1];
-LOG("v: %d, f: %d\n", vlen, flen);
-LOG("init vCode\n");
-	AS3::ui::flash::utils::ByteArray vCode = AS3::ui::flash::utils::ByteArray::_new();
-LOG("write vCode\n");
-	vCode->writeBytes(AS3::ui::internal::get_ram(), (unsigned int)&((char*)data)[8], vlen);
-	
-//	AS3::ui::flash::net::FileReference file = AS3::ui::flash::net::FileReference::_new();
-//	file->save(vCode, "_shader.fsh");
-			
-LOG("init fCode\n");
-	AS3::ui::flash::utils::ByteArray fCode = AS3::ui::flash::utils::ByteArray::_new();
-LOG("write fCode\n");
+	vCode->writeBytes(AS3::ui::internal::get_ram(), (unsigned int)&((char*)data)[8], vlen);	
 	fCode->writeBytes(AS3::ui::internal::get_ram(), (unsigned int)&((char*)data)[8 + vlen], flen);
-LOG("compile\n");
 	vCode->endian = AS3::ui::flash::utils::Endian::__LITTLE_ENDIAN;
 	fCode->endian = AS3::ui::flash::utils::Endian::__LITTLE_ENDIAN;
     prog->upload(vCode, fCode);
-LOG("ok\n");
-*/
 	return prog;
 }
 
@@ -153,29 +141,30 @@ void Render::setViewport(int left, int top, int width, int height) {
 	//
 }
 
-
 void Render::setCulling(CullMode value) {
 	if (m_culling == value) return;
 	switch (value) {
 		case CULL_NONE :
-//			glDisable(GL_CULL_FACE);
+			context3D->setCulling(AS3::ui::flash::display3D::Context3DTriangleFace::NONE);
 			break;
 		case CULL_BACK :
-//			glCullFace(GL_BACK);
+			context3D->setCulling(AS3::ui::flash::display3D::Context3DTriangleFace::FRONT);
 			break;
 		case CULL_FRONT :
-//			glCullFace(GL_FRONT);
+			context3D->setCulling(AS3::ui::flash::display3D::Context3DTriangleFace::BACK);
 			break;
 	}
-//	if (m_culling == CULL_NONE)
-//		glEnable(GL_CULL_FACE);
 	m_culling = value;
 }
 
 void Render::setBlending(BlendMode value) {
     if (value == m_blending) return;
-
 	switch (value) {
+		case BLEND_NONE :
+			context3D->setBlendFactors(
+				AS3::ui::flash::display3D::Context3DBlendFactor::ONE,
+				AS3::ui::flash::display3D::Context3DBlendFactor::ZERO);
+			break;
 		case BLEND_ALPHA :
 			context3D->setBlendFactors(
 				AS3::ui::flash::display3D::Context3DBlendFactor::SOURCE_ALPHA,
@@ -201,21 +190,24 @@ void Render::setBlending(BlendMode value) {
 }
 
 void Render::setDepthWrite(bool value) {
-	if (m_depthWrite != value) {
-//		glDepthMask(value);
-		m_depthWrite = value;
-	}
+	if (m_depthWrite == value) return;
+	m_depthWrite = value;
+	if (m_depthTest)
+		context3D->setDepthTest(m_depthWrite, AS3::ui::flash::display3D::Context3DCompareMode::LESS_EQUAL);
+	else
+		context3D->setDepthTest(m_depthWrite, AS3::ui::flash::display3D::Context3DCompareMode::ALWAYS);
 }
 
 void Render::setDepthTest(bool value) {
 	if (m_depthTest == value) return;
-//	value ? glEnable(GL_DEPTH_TEST) : glDisable(GL_DEPTH_TEST);
 	m_depthTest = value;
+	if (m_depthTest)
+		context3D->setDepthTest(m_depthWrite, AS3::ui::flash::display3D::Context3DCompareMode::LESS_EQUAL);
+	else
+		context3D->setDepthTest(m_depthWrite, AS3::ui::flash::display3D::Context3DCompareMode::ALWAYS);
 }
 
 void Render::setTexture(TextureObj obj, int sampler) {
-	if (sampler == 1) return;
-
     if (m_active_texture[sampler] != obj) {
 		m_active_texture[sampler] = obj;
 		context3D->setTextureAt(sampler, obj);
@@ -225,12 +217,14 @@ void Render::setTexture(TextureObj obj, int sampler) {
 bool Render::setShader(ShaderObj obj) {
 	if (m_active_shader != obj) {
 		m_active_shader = obj;
-		/*
 		context3D->setProgram(obj);
-		const vec4 cvec(0.0, 0.5, 1.0, 2.0);
-		int idx = 16;
-		setShaderUniform(utVec4, 1, (void*)&cvec, NULL, idx);
-		*/
+		setTexture(NULL_OBJ, 0);
+		setTexture(NULL_OBJ, 1);
+		setTexture(NULL_OBJ, 2);
+
+		vec4 v = vec4(0.0, 0.5, 1.0, 0.9);
+		context3D->setProgramConstantsFromByteArray(AS3::ui::flash::display3D::Context3DProgramType::FRAGMENT, 0, 1, AS3::ui::internal::get_ram(), (unsigned)&v, (void*)&v);
+
 		return true;
 	}
 	return false;
