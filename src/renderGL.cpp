@@ -120,7 +120,7 @@ void shaderAttach(GLenum type, GLuint &ID, const char *code) {
 }
 
 // IndexBuffer -----------------------------------------------
-IndexBuffer::IndexBuffer(void *data, int count, IndexFormat format) : count(count), format(format) {
+IndexBuffer::IndexBuffer(void *data, int count, IndexFormat format) : obj(NULL_OBJ), count(count), format(format) {
 	glGenBuffers(1, &obj);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (GLuint)obj);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * IndexStride[format], data, GL_STATIC_DRAW);
@@ -135,7 +135,7 @@ void IndexBuffer::bind() {
 }
 
 // VertexBuffer ----------------------------------------------
-VertexBuffer::VertexBuffer(void *data, int count, VertexFormat format) : count(count), format(format) {
+VertexBuffer::VertexBuffer(void *data, int count, VertexFormat format) : obj(NULL_OBJ), count(count), format(format) {
 	glGenBuffers(1, &obj);
 	glBindBuffer(GL_ARRAY_BUFFER, (GLuint)obj);
 	glBufferData(GL_ARRAY_BUFFER, count * VertexStride[format], data, GL_STATIC_DRAW);

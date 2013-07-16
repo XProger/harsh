@@ -2,6 +2,8 @@ package com.adobe.flascc {
 	import flash.display.*;
 	import flash.net.*;
 	import flash.events.Event;
+	import flash.events.KeyboardEvent;
+	import flash.events.MouseEvent;
 	import flash.text.TextField;
 	import flash.utils.ByteArray;
 
@@ -15,50 +17,71 @@ package com.adobe.flascc {
 	public function addPack(x:*) {
 		packList.addFile("/data.jet", x);
 	}
-  
-	/**
-	* A basic implementation of a console for FlasCC apps.
-	* The PlayerKernel class delegates to this for things like read/write
-	* so that console output can be displayed in a TextField on the Stage.
-	*/
-	[SWF(frameRate = '60', width = '800', height = '600', backgroundColor = '0xffffff')]
-	public class Console extends Sprite implements ISpecialFile
-	{
 
-		/**
-		* To Support the preloader case you might want to have the Console
-		* act as a child of some other DisplayObjectContainer.
-		*/
+	public class Console extends Sprite implements ISpecialFile  {
+		var touchProc:int;
+	
 		public function Console(container:DisplayObjectContainer = null)
 		{
-		  CModule.rootSprite = container ? container.root : this
+			CModule.rootSprite = container ? container.root : this
 
-		  if(CModule.runningAsWorker()) {
-			return;
-		  }
+			if(CModule.runningAsWorker())
+				return;
 
-		  if(container) {
-			container.addChild(this)
-			init(null)
-		  } else {
-			addEventListener(Event.ADDED_TO_STAGE, init)
-		  }
+			if (container) {
+				container.addChild(this);
+				init(null);
+			} else
+				addEventListener(Event.ADDED_TO_STAGE, init);
 		}
 
-    /**
-    * All of the real FlasCC init happens in this method
-    * which is either run on startup or once the SWF has
-    * been added to the stage.
-    */
-    protected function init(e:Event):void
-    {
-      stage.frameRate = 60
-      stage.scaleMode = StageScaleMode.NO_SCALE
 
-      CModule.vfs.console = this;
-	  CModule.vfs.addBackingStore(packList, null);
-      CModule.startAsync(this)
-    }
+		protected function init(e:Event):void {
+			touchProc = CModule.getPublicSymbol("touchProc");
+
+			CModule.vfs.console = this;
+			CModule.vfs.addBackingStore(packList, null);
+			CModule.startAsync(this)
+			
+			stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
+			stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
+			stage.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
+			stage.addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
+			stage.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
+			
+			try {
+				stage.addEventListener(MouseEvent.RIGHT_CLICK, function (e:*):void {} );
+			} catch(e:*) {
+				// disable the right-click menu if possible
+			}
+		}
+
+		public function touch(id:int, state:int, x:int, y:int) {
+			CModule.callI(touchProc, new <int>[id, state, x, y]);
+		}
+
+		public function onMouseMove(me:MouseEvent):void {
+			me.stopPropagation();
+			touch(0, 2, me.stageX, me.stageY);
+		}
+    
+		public function onMouseDown(me:MouseEvent):void  {
+			me.stopPropagation();
+			touch(0, 0, me.stageX, me.stageY);
+		}
+    
+		public function onMouseUp(me:MouseEvent):void {
+			me.stopPropagation();
+			touch(0, 1, me.stageX, me.stageY);
+		}
+
+		public function onKeyDown(ke:KeyboardEvent):void  {
+			touch(ke.keyCode, 3, 0, 0);
+		}
+
+		public function onKeyUp(ke:KeyboardEvent) {
+			touch(ke.keyCode, 4, 0, 0);
+		}
 
     /**
     * The callback to call when FlasCC code calls the posix exit() function. Leave null to exit silently.

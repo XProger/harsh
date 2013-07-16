@@ -144,8 +144,8 @@ struct Vertex_PT32 {
 };
 
 struct Vertex_PT34 {
-	vec3 pos;
-	float tc[4];
+	vec3	pos;
+	vec4	tc;
 };
 
 struct Vertex_PT34s {

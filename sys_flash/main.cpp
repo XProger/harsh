@@ -21,9 +21,11 @@ using namespace AS3::ui;
 //flash::display3D::IndexBuffer3D i3dbuffer;
 //flash::display3D::VertexBuffer3D v3dbuffer;
 
+/*
 IndexBuffer *iBuffer;
 VertexBuffer *vBuffer;
 Texture *tex;
+*/
 
 size_t startTime;
 
@@ -33,24 +35,28 @@ int getTime() {
 	return (time.tv_sec * 1000) + (time.tv_usec / 1000) - startTime;
 }
 
+extern "C" void touchProc(int id, int state, int x, int y) {
+	LOG("touch %d %d %d %d\n", id, state, x, y );
+	Core::touch(id, state, x, y);
+}
+
 
 // This function will be attached to the ENTER_FRAME event to drive the
 // animation.
-static var enterFrame(void *arg, var as3Args)
-{
+static var enterFrame(void *arg, var as3Args) {
     static int tc = 0;
     try {
+	/*
 		Render::clear(CLEAR_ALL, 0, 1, 0, 0);
-
 		mat4 m = mat4(Core::getTime() * 0.01, vec3(0, 0, 1));
 		Render::context3D->setProgramConstantsFromByteArray(AS3::ui::flash::display3D::Context3DProgramType::VERTEX, 0, 16, AS3::ui::internal::get_ram(), (unsigned)&m, (void*)&m);
-
-		Core::update();
-		//Core::render();
 		if (tex->bind(0)) 
 			Render::drawTriangles(iBuffer, vBuffer, 0, 1);
 		else
 			LOG("no texture\n");
+	*/
+		Core::update();
+		Core::render();
         Render::context3D->present();
     } catch(var e) {
         char *err = internal::utf8_toString(e);
@@ -59,6 +65,52 @@ static var enterFrame(void *arg, var as3Args)
     }
     return internal::_undefined;
 }
+
+/*
+			stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
+			stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
+			stage.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
+			stage.addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
+			stage.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
+			
+    public function bufferMouseMove(me:MouseEvent) {
+      me.stopPropagation()
+      mx = me.stageX
+      my = me.stageY
+    }
+    
+    public function bufferMouseDown(me:MouseEvent) 
+    {
+      me.stopPropagation();
+      mx = me.stageX;
+      my = me.stageY;
+      button = 1;
+    }
+    
+    public function bufferMouseUp(me:MouseEvent) 
+    {
+      me.stopPropagation();
+      mx = me.stageX;
+      my = me.stageY;
+      button = 0;
+    }
+
+    public function bufferKeyDown(ke:KeyboardEvent) 
+    {
+      if(Keyboard.capsLock || ke.keyCode >= 127)
+        return;
+
+      keybytes.writeByte(int(ke.keyCode & 0x7F));
+    }
+    
+    public function bufferKeyUp(ke:KeyboardEvent) 
+    {
+      if(Keyboard.capsLock || ke.keyCode > 128)
+        return;
+
+      keybytes.writeByte(int(ke.keyCode | 0x80));
+    }
+*/
 
 // If we fail to create the Context3D we display a warning
 static var context3DError(void *arg, var as3Args)
@@ -85,31 +137,39 @@ static var context3DError(void *arg, var as3Args)
 static var initContext3D(void *arg, var as3Args)
 {
 	printf("initContext3D\n");
-	
+		
+	Render::context3D = Render::stage3D->context3D;
+	Render::context3D->enableErrorChecking = true;
+    Render::context3D->configureBackBuffer(Render::stage->stageWidth, Render::stage->stageHeight, 0, true, false);
+
 	Core::init("data.jet", getTime);
 	Core::resize(Render::stage->stageWidth, Render::stage->stageHeight);
 	Core::reset();
 	Core::resume();
 
-	
-	Render::context3D = Render::stage3D->context3D;
-	Render::context3D->enableErrorChecking = true;
-    Render::context3D->configureBackBuffer(Render::stage->stageWidth, Render::stage->stageHeight, 0, true, false);
 
     com::adobe::utils::AGALMiniAssembler vasm = com::adobe::utils::AGALMiniAssembler::_new(false);
     vasm->assemble(flash::display3D::Context3DProgramType::VERTEX,
                    "m44 vt0, va0, vc0\n \
-                   mov v0, va3\n \
+                   mov vt1.xy, va3.xy\n \
+				   mul vt1.zw, va3.zw, vc8.zw\n \
+				   add vt1.zw, vt1.zw, vc8.xy\n \
+				   mov v0, vc8\n \
 				   mov op, vt0\n");
 
     com::adobe::utils::AGALMiniAssembler fasm = com::adobe::utils::AGALMiniAssembler::_new(false);
     fasm->assemble(flash::display3D::Context3DProgramType::FRAGMENT,
-                   "tex oc, v0.xy, fs0 <2d,dxt1,repeat,linear,miplinear>\n");
+                   "tex ft0, v0.xy, fs0 <2d,dxt1,repeat,linear,miplinear>\n \
+				    tex ft2, v0.zw, fs2 <2d,dxt1,repeat,linear,miplinear>\n \
+					mov ft3.x, v0.y\n \
+					mov ft3.yzw, fc0.zzz\n \
+					mov oc, ft3\n");
+					//mul oc, ft0, ft2\n");
 
     flash::display3D::Program3D program = Render::context3D->createProgram();
     program->upload(vasm->agalcode, fasm->agalcode);
     Render::context3D->setProgram(program);
-	
+/*	
 	short idata[] = {
 		2,1,0
 	};
@@ -125,7 +185,8 @@ static var initContext3D(void *arg, var as3Args)
 	vBuffer = new VertexBuffer(vdata, 3, VF_PT34);
 
 	tex = new Texture("texture/check.pvr");
-	
+*/
+
 	/*
 	
     i3dbuffer = Render::context3D->createIndexBuffer(3);
@@ -149,14 +210,12 @@ static var initContext3D(void *arg, var as3Args)
     Render::context3D->setProgramConstantsFromMatrix(flash::display3D::Context3DProgramType::VERTEX, 0, projection, false);
 */
 
-	mat4 m;
-	m.identity();
-	Render::context3D->setProgramConstantsFromByteArray(AS3::ui::flash::display3D::Context3DProgramType::VERTEX, 0, 16, AS3::ui::internal::get_ram(), (unsigned)&m, (void*)&m);
 
 
-	vec4 v = vec4(1.0, 1.0, 0.5, 1.0);
+	vec4 v = vec4(0.0, 0.5, 1.0, 2.0);
 	void *value = &v;
 	Render::context3D->setProgramConstantsFromByteArray(AS3::ui::flash::display3D::Context3DProgramType::FRAGMENT, 0, 1, AS3::ui::internal::get_ram(), (unsigned)value, (void*)value);
+
 	/*
     var vc = internal::new_Vector_Number();
     vc[0] = internal::new_Number(0.5);

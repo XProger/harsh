@@ -101,7 +101,6 @@ bool Resource::valid() {
 //{ Texture
 void TextureRes::load(Stream *stream) {
 	Render::freeTexture(obj);
-	LOG("loading texture res\n");
     if (!stream) {
         MipMap m = { NULL, width, height, width * height * 4 };
         obj = Render::createTexture(TEX_RGBA8, &m, 1);
@@ -178,7 +177,6 @@ void TextureRes::load(Stream *stream) {
 
 	delete mipMaps;
     m_valid = obj != NULL_OBJ;
-	LOG("ok\n");
 }
 
 TextureRes* TextureRes::create(int width, int height) {
@@ -206,12 +204,10 @@ bool Texture::bind(int sampler) {
 bool Shader::states[SP_MAX];
 
 void ShaderRes::load(Stream *stream) {
-	LOG("loading shader res\n");
 	Render::freeShader(obj);
 	obj = Render::createShader(stream->getData(stream->size));
 	for (int i = 0; i < SP_MAX; i++) index[i] = -1;
 	m_valid = obj != NULL_OBJ;
-	LOG("ok\n");
 }
 
 bool Shader::bind() {
@@ -250,17 +246,12 @@ Material::Material(Stream *stream) {
 	blending	= (BlendMode)stream->getInt();
 	depthWrite	= stream->getInt() != 0;
 	culling		= (CullMode)stream->getInt();	
-	LOG("load shader\n");
 	shader		= new Shader(0, stream->getInt());
 	Hash h;
-	LOG("load diffuse\n");
 	diffuse		= (h = stream->getInt()) ? new Texture(NULL, h) : NULL;
-	LOG("load mask\n");
 	mask		= (h = stream->getInt()) ? new Texture(NULL, h) : NULL;
-	LOG("load lightmap\n");
 	lightMap	= (h = stream->getInt()) ? new Texture(NULL, h) : NULL;
 	stream->getCopy(&param, sizeof(param));
-LOG("ok\n");
 }
 
 Material::~Material() {
@@ -332,7 +323,6 @@ bool Material::bind() {
 
 //{ Mesh Resource
 void MeshRes::load(Stream *stream) {	
-	LOG("loading mesh res\n");
 	if (vData && iData) {
 		delete vBuffer;
 		delete iBuffer;
@@ -344,15 +334,11 @@ void MeshRes::load(Stream *stream) {
 		iCount  = stream->getInt();
 		vFormat	= (VertexFormat)stream->getInt();
 		iFormat = (IndexFormat)stream->getInt();
-		LOG("vCount:%d iCount:%d vFormat:%d iFormat:%d\n", vCount, iCount, vFormat, iFormat);
 		vBuffer = new VertexBuffer(stream->getData(vCount * VertexStride[vFormat]), vCount, vFormat);
-		LOG("upload index buffer\n");
 		iBuffer = new IndexBuffer(stream->getData(iCount * IndexStride[iFormat]), iCount, iFormat);
-		LOG("uploaded\n");
 	}
 //	LOG("mesh i:%d\tv:%d\n", iCount, vCount);
 	m_valid = true;
-	LOG("ok\n");
 }
 
 MeshRes* MeshRes::create(IndexFormat iFormat, VertexFormat vFormat, void *idx, void *vert, int iCount, int vCount) {

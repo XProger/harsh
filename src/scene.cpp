@@ -285,12 +285,10 @@ void Scene::load(const char *name) {
 		//	int nodeType = stream->getInt();
 	//	switch (nodeType) {
 	//		case NT_MESH :
-		LOG("load mesh\n");
 				Mesh *mesh = new Mesh(this, stream->getInt());
 				stream->getCopy(&mesh->rel_matrix, sizeof(mesh->rel_matrix));
 				stream->getCopy(&mesh->rel_bbox, sizeof(mesh->rel_bbox));
 				mesh->matrix = mesh->rel_matrix;
-			LOG("load material\n");
 				mesh->material = new Material(stream);
 /*
 				fwrite(&mesh->material->lightMap->res->hash, 4, 1, f);

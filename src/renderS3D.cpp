@@ -19,7 +19,7 @@ AS3::ui::flash::display::Stage3D Render::stage3D;
 AS3::ui::flash::display3D::Context3D Render::context3D;
 
 // IndexBuffer -----------------------------------------------
-IndexBuffer::IndexBuffer(void *data, int count, IndexFormat format) : count(count), format(format) {
+IndexBuffer::IndexBuffer(void *data, int count, IndexFormat format) : obj(NULL_OBJ), count(count), format(format) {
 	if (format != IF_SHORT) {
 		LOG("unsupported iFormat (%d)\n", format);
 		return;
@@ -37,7 +37,7 @@ void IndexBuffer::bind() {
 }
 
 // VertexBuffer ----------------------------------------------
-VertexBuffer::VertexBuffer(void *data, int count, VertexFormat format) : count(count), format(format) {
+VertexBuffer::VertexBuffer(void *data, int count, VertexFormat format) : obj(NULL_OBJ), count(count), format(format) {
 	obj = Render::context3D->createVertexBuffer(count, VertexStride[format] / 4);
 	obj->uploadFromByteArray(AS3::ui::internal::get_ram(), (int)&data[0], 0, count, (void*)&data[0]);
 }
@@ -109,8 +109,6 @@ void Render::clear(ClearMask clearMask, float r, float g, float b, float a) {
 }
 
 TextureObj Render::createTexture(TexFormat texFormat, MipMap *mipMaps, int mipCount) {
-	LOG("init texture: f-%d, mips-%d w:%d h:%d s:%d\n", texFormat, mipCount, mipMaps[0].width, mipMaps[0].height, mipMaps[0].size);
-
 	AS3::ui::flash::display3D::textures::Texture tex;
 	if (texFormat == TEX_ATF) {
 		tex = context3D->createTexture(mipMaps[0].width, mipMaps[0].height, AS3::ui::flash::display3D::Context3DTextureFormat::COMPRESSED, false);
@@ -216,8 +214,8 @@ void Render::setDepthTest(bool value) {
 }
 
 void Render::setTexture(TextureObj obj, int sampler) {
-	if (sampler > 0) return;
-	
+	if (sampler == 1) return;
+
     if (m_active_texture[sampler] != obj) {
 		m_active_texture[sampler] = obj;
 		context3D->setTextureAt(sampler, obj);
@@ -252,9 +250,21 @@ void Render::setShaderUniform(UniformType type, int count, const void *value, co
 	
 	if (index == -1)
 		return;
-		
-	static const int vsize[utMAX] = { 1, 2, 3, 4, 16 };
-	context3D->setProgramConstantsFromByteArray(AS3::ui::flash::display3D::Context3DProgramType::VERTEX, 0, vsize[type], AS3::ui::internal::get_ram(), (unsigned)value, (void*)value);
+
+	const void *data = value;
+	mat4 m;
+	if (type == utMat4) {
+		m = ((mat4*)value)->transpose();
+		data = &m;
+	}
+/*
+	vec4 v;
+	if (count % sizeof(vec4)) {
+		value = &v;
+	}
+*/		
+	static const int vsize[utMAX] = { 1, 1, 1, 1, 4 };
+	context3D->setProgramConstantsFromByteArray(AS3::ui::flash::display3D::Context3DProgramType::VERTEX, index, vsize[type], AS3::ui::internal::get_ram(), (unsigned)data, (void*)data);
 }
 
 void Render::freeTexture(TextureObj obj) {

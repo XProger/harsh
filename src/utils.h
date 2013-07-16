@@ -417,14 +417,14 @@ struct mat4 {
 		*this = *this * m;
 	}
 
-	float det() {
+	float det() const {
 		return	e00 * (e11 * (e22 * e33 - e32 * e23) - e21 * (e12 * e33 - e32 * e13) + e31 * (e12 * e23 - e22 * e13)) -
 				e10 * (e01 * (e22 * e33 - e32 * e23) - e21 * (e02 * e33 - e32 * e03) + e31 * (e02 * e23 - e22 * e03)) +
 				e20 * (e01 * (e12 * e33 - e32 * e13) - e11 * (e02 * e33 - e32 * e03) + e31 * (e02 * e13 - e12 * e03)) -
 				e30 * (e01 * (e12 * e23 - e22 * e13) - e11 * (e02 * e23 - e22 * e03) + e21 * (e02 * e13 - e12 * e03));
 	}
 
-	mat4 inverse() {
+	mat4 inverse() const {
 		float idet = 1.0f / det();
 		mat4 r;
 		r.e00 =  (e11 * (e22 * e33 - e32 * e23) - e21 * (e12 * e33 - e32 * e13) + e31 * (e12 * e23 - e22 * e13)) * idet;
@@ -446,7 +446,7 @@ struct mat4 {
 		return r;
 	}
 
-	mat4 transpose() {
+	mat4 transpose() const {
 		mat4 r;
 		r.e00 = e00; r.e10 = e01; r.e20 = e02; r.e30 = e03;
 		r.e01 = e10; r.e11 = e11; r.e21 = e12; r.e31 = e13;
