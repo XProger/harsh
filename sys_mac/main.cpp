@@ -5,8 +5,8 @@
 #include "core.h"
 #include "game.h"
 
-int WIDTH = 1280;
-int HEIGHT = 720;
+int WIDTH = 800;
+int HEIGHT = 600;
 
 WindowRef window;
 bool isQuit = false;
@@ -15,7 +15,7 @@ int startTime = 0;
 OSStatus eventHandler(EventHandlerCallRef handler, EventRef event, void* userData) {
 	OSType eventClass	= GetEventClass(event);
 	UInt32 eventKind	= GetEventKind(event);
-	
+
 	switch (eventClass) {
 		case kEventClassWindow :
 			switch (eventKind) {
@@ -108,27 +108,26 @@ int main() {
 	CFURLRef bundleURL	= CFBundleCopyBundleURL(bundle);
 	CFStringRef pathStr	= CFURLCopyFileSystemPath(bundleURL, kCFURLPOSIXPathStyle);
 	CFStringGetFileSystemRepresentation(pathStr, (char*)&path, 1024);
-	strcat(path, "/Contents/Resources/data.pak");
+	strcat(path, "/Contents/Resources/data.jet");
 	
 	startTime = getTime();
-	Fuse::init((char*)&path, new Game(), getTime);
-	Fuse::reset();
-	Fuse::resume();
-	Fuse::resize(WIDTH, HEIGHT);
+	Core::init((char*)&path, getTime);
+	Core::resize(WIDTH, HEIGHT);
+	Core::reset();
+	Core::resume();
 
 	EventRecord event;
 	while (!isQuit) {
 		while (GetNextEvent(0xffff, &event)) {};
-		if (!Fuse::paused) {
-			Fuse::render();
-			aglSwapBuffers(context);
-		}
+		Core::update();
+		Core::render();
+		aglSwapBuffers(context);
 	}
 	
-	Fuse::free();
+	Core::free();
 	
 	aglSetCurrentContext(NULL);
-    ReleaseWindow(window);
+	ReleaseWindow(window);
 	
 	return 0;
 }
