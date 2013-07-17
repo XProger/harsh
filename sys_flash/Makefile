@@ -30,7 +30,7 @@ compile: check
 	../src/scene.cpp \
 	-I../src/ \
 	-DFLASH \
-	-swf-version=14 \
+	-swf-version=15 \
 	-swf-preloader=PreLoader.swf \
 	-swf-size=800x600 \
 	-lAS3++ -lFlash++ \

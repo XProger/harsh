@@ -48,12 +48,6 @@ package com.adobe.flascc {
 			stage.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
 			stage.addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
 			stage.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
-			
-			try {
-				stage.addEventListener(MouseEvent.RIGHT_CLICK, function (e:*):void {} );
-			} catch(e:*) {
-				// disable the right-click menu if possible
-			}
 		}
 
 		public function touch(id:int, state:int, x:int, y:int) {

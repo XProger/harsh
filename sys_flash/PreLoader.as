@@ -1,22 +1,13 @@
 package com.adobe.flascc.preloader {
-	import flash.display.MovieClip;
-	import flash.events.Event;
-	import flash.events.ProgressEvent;
-	import flash.text.TextField;
-	import flash.display.Graphics;
-	import flash.events.AsyncErrorEvent;
-	import flash.events.HTTPStatusEvent;
-	import flash.events.IOErrorEvent;
-	import flash.events.SecurityErrorEvent;
-	import flash.net.URLLoader;
-	import flash.net.URLLoaderDataFormat;
-	import flash.net.URLRequest;
-	import flash.net.URLRequest;
+	import flash.display.*;
+	import flash.events.*;
+	import flash.events.*;
+	import flash.net.*;
 	import flash.system.ApplicationDomain;
-	import flash.text.TextFormat;
-	import flash.text.TextFormatAlign;
+	import flash.text.*;
 	import flash.utils.ByteArray;
-
+	import flash.media.Sound;
+	
 	import com.adobe.flascc.Console;
     
 	[SWF(backgroundColor="#000000")]
@@ -32,6 +23,13 @@ package com.adobe.flascc.preloader {
 		}
 
 		private function onAddedToStage(e:*) {
+			try {
+				stage.addEventListener(MouseEvent.RIGHT_CLICK, function (e:*):void {} );
+			} catch(e:*) {}
+			
+			var s:Sound = new Sound( new URLRequest("music.mp3") );
+			s.play(0, 999);
+			
 			stage.frameRate = 60
 			loaderInfo.addEventListener(ProgressEvent.PROGRESS, onProgress4)
 
