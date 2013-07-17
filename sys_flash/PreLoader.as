@@ -19,9 +19,9 @@ package com.adobe.flascc.preloader {
 	import flash.text.*;
 	import flash.utils.ByteArray;
 	import flash.media.Sound;
-	
+
 	import com.adobe.flascc.Console;
-    
+
 	[SWF(backgroundColor="#000000")]
 	public class PreLoader extends MovieClip {
 		var fail = false
@@ -38,10 +38,10 @@ package com.adobe.flascc.preloader {
 			try {
 				stage.addEventListener(MouseEvent.RIGHT_CLICK, function (e:*):void {} );
 			} catch(e:*) {}
-			
+
 			var s:Sound = new Sound( new URLRequest("music.mp3") );
 			s.play(0, 999);
-			
+
 			stage.frameRate = 60
 			loaderInfo.addEventListener(ProgressEvent.PROGRESS, onProgress4)
 

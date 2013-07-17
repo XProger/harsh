@@ -38,15 +38,20 @@
 
 	#include "TargetConditionals.h"
 
-	#ifdef TARGET_OS_IPHONE
-    	#include <OpenGLES/ES2/gl.h>
+	#if TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR
+		#include <OpenGLES/ES2/gl.h>
 		#include <OpenGLES/ES2/glext.h>
 
 		#define GL_ALPHA8 GL_ALPHA
 		#define GL_RGBA8 GL_RGBA8_OES
-    	#define GL_LUMINANCE8 GL_LUMINANCE
-    	#define GL_LUMINANCE8_ALPHA8 GL_LUMINANCE_ALPHA
+		#define GL_LUMINANCE8 GL_LUMINANCE
+		#define GL_LUMINANCE8_ALPHA8 GL_LUMINANCE_ALPHA
+	#else
+		#include <OpenGL/gl.h>
+		#include <OpenGL/glext.h>
+		#include <AGL/agl.h>
 	#endif
+
 #endif
 
 #ifdef FLASH

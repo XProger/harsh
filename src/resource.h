@@ -43,7 +43,7 @@ public:
     static void deinit();
     static void invalidate();
 	static void loading();
-    static void check(bool forceFree = false);
+    static void gc(bool forceFree = false);
 
 	template <typename T>
 	static T* loadRes(const char *name, Hash hash) {

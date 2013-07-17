@@ -83,7 +83,7 @@ void Resource::loading() {
 	LOG("pack seek: %d times\n", Stream::packSet);
 }
 
-void Resource::check(bool forceFree) {
+void Resource::gc(bool forceFree) {
 	Resource *p, *r = (Resource(*))list->first;
 	int time = Core::getTime();
 	while (r) {
