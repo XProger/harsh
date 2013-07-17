@@ -10,3 +10,15 @@ sys_ios/harsh.xcodeproj/xcuserdata/xproger.xcuserdatad/xcschemes/harsh.xcscheme
 sys_ios/harsh.xcodeproj/project.xcworkspace/xcuserdata/xproger.xcuserdatad/UserInterfaceState.xcuserstate
 
 *.ipa
+
+.DS_Store
+
+*.zip
+
+*.xcworkspacedata
+
+*.xcuserstate
+
+sys_mac/harsh.xcodeproj/xcuserdata/xproger.xcuserdatad/xcschemes/harsh.xcscheme
+
+sys_mac/harsh.xcodeproj/xcuserdata/xproger.xcuserdatad/xcschemes/xcschememanagement.plist

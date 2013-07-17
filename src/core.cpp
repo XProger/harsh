@@ -82,7 +82,7 @@ void Core::resize(int width, int height) {
 }
 
 void Core::update() {
-    Resource::check();
+    Resource::gc();
 
 	int time = getTime();
 	float dt = (time - lastTime) * 0.001f;
