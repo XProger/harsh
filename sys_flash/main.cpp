@@ -1,3 +1,15 @@
+  /*=================================================================}
+ /  <<<<<<<<<<<<<<<<<<<<<--- Harsh Engine --->>>>>>>>>>>>>>>>>>>>>>  }
+/  e-mail  : xproger@list.ru                                         }
+{  github  : https://github.com/xproger/harsh                        }
+{====================================================================}
+{ LICENSE:                                                           }
+{ Copyright (c) 2013, Timur "XProger" Gagiev                         }
+{ All rights reserved.                                               }
+{                                                                    }
+{ Redistribution and use in source and binary forms, with or without /
+{ modification, are permitted under the terms of the BSD License.   /
+{=================================================================*/
 #include <AS3/AS3.h>
 #include <Flash++.h>
 #include <sys/time.h>
