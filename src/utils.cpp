@@ -11,7 +11,6 @@
 { modification, are permitted under the terms of the BSD License.   /
 {=================================================================*/
 #include "utils.h"
-#include <cstdlib>
 
 #define APK_PACK_NAME "res/drawable/data.jet"
 #define get16bits(d) (*((const unsigned short *) (d)))
@@ -175,7 +174,7 @@ Stream::Stream(unsigned int hash) : ptr(0), pos(0), size(0) {
 }
 
 Stream::~Stream() {
-	free(ptr);
+	delete ptr;
 }
 
 #define UA_GET32(p)			(*(unsigned int*)(p))

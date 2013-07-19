@@ -14,9 +14,7 @@
 #define UTILS_H
 
 #include <stdio.h>
-#include <string.h>
 #include <math.h>
-#include <cstdlib>
 
 #ifdef ANDROID
 	#include <android/log.h>
@@ -26,36 +24,6 @@
 
 #ifdef WIN32
 	#include <windows.h>
-/*
-	void printf(char * fmtstr, ...)
-	{
-		DWORD dwRet;
-		CHAR buffer[256];
-		va_list v1;
-		va_start(v1,fmtstr);
-		wvsprintf(buffer,fmtstr,v1);
-		WriteConsole(GetStdHandle(STD_OUTPUT_HANDLE), buffer, strlen(buffer), &dwRet, 0);
-		va_end(v1);
-	}
-
-	HANDLE g_hHeap;
-
-	extern "C" HANDLE	crt_initialize() { return g_hHeap = HeapCreate(0, 0, 0)); }
-	extern "C" BOOL	crt_uninitialize() { return HeapDestroy(g_hHeap)); }
-
-		int mainCRTStartup()
-		{
-			crt_initialize()
-			// maybe get the arguments here with GetCommandLine()
-			main(0, NULL);
-			return 0;
-		};
-
-	}
-	
-	void * __cdecl operator new(unsigned int size) { return HeapAlloc(g_hHeap, HEAP_ZERO_MEMORY, size); }
-	void __cdecl operator delete(void *p) { HeapFree(g_hHeap, 0, p); }
-*/
 	#define LOG(...) printf(__VA_ARGS__)
 #endif
 
@@ -191,11 +159,11 @@ struct vec3 {
 	vec3 refract(const vec3 &n, float f) {
 		float d = dot(n);
 		float s = (1.0f - f*f) * (1.0f - d*d);
-		return (s < _EPS) ? reflect(n) : (*this * f - n * (sqrt(s) + d*f));
+		return (s < _EPS) ? reflect(n) : (*this * f - n * (sqrtf(s) + d*f));
 	}
 
 	vec3 rotate(float angle, const vec3 &axis) {
-		float s = sin(angle), c = cos(angle);
+		float s = sinf(angle), c = cosf(angle);
 		vec3 v0 = axis * dot(axis),
 			 v1 = *this - v0,
 			 v2 = axis.cross(v1);
@@ -402,10 +370,10 @@ struct mat4 {
 				return quat(0.25f / s, (e01 + e10) * s, (e02 + e20) * s, (e21 - e12) * s);
 			} else
 				if (e11 > e22) {
-					s = 0.5f / sqrt(1.0f - e00 + e11 - e22);
+					s = 0.5f / sqrtf(1.0f - e00 + e11 - e22);
 					return quat((e01 + e10) * s, 0.25f / s, (e12 + e21) * s, (e02 - e20) * s);
 				} else {
-					s = 0.5f / sqrt(1.0f - e00 - e11 + e22);
+					s = 0.5f / sqrtf(1.0f - e00 - e11 + e22);
 					return quat((e02 + e20) * s, (e12 + e21) * s, 0.25f / s, (e10 - e01) * s);
 				}
 	}

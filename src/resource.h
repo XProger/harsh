@@ -246,15 +246,15 @@ struct SoundChannel {
 };
 
 struct Sound {
-	static SoundChannel channels[SND_MAX_CHANNELS];
+	static SoundChannel* channels;
 	SoundRes *res;
 
 	Sound(const char *name, Hash hash = 0) { res = SoundRes::load(name, hash); }
 	virtual ~Sound();
     bool play(float pan = 0, SoundChannel **ch = NULL);
 
-    static void init() { clear(); };
-    static void deinit() { clear(); };
+    static void init() { channels = new SoundChannel[SND_MAX_CHANNELS]; clear(); };
+    static void deinit() { delete channels; clear(); };
 	static void clear();
     static void fill(SoundFrame *frames, int count);
 };

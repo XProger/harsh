@@ -50,12 +50,13 @@ Game	*Core::game;
 
 void Core::init(const char *path, getTimePtr getTime) {
 	LOG("Core::init\n");
-    Core::getTime = getTime;
+    input = new Input();
+	Core::getTime = getTime;
     Stream::init(path);
     Render::init();
     Resource::init();
     Sound::init();
-    input = new Input();
+
     scene = new Scene();
     game = new Game();
     fpsTime = getTime();

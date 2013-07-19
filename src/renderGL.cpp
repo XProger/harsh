@@ -15,9 +15,7 @@
 #ifdef OGL
 
 #ifdef WIN32
-	#include <cstdio>
 	#include <windows.h>
-
 
 	void* _GetProcAddress(const char *name) {
 		void* ptr = (void*)wglGetProcAddress(name);

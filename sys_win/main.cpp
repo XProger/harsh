@@ -10,6 +10,7 @@
 { Redistribution and use in source and binary forms, with or without /
 { modification, are permitted under the terms of the BSD License.   /
 {=================================================================*/
+
 #include <windows.h>
 #include <winsock.h>
 #include "core.h"
@@ -19,7 +20,7 @@ bool quit = false;
 const int WIDTH	 = 800;
 const int HEIGHT = 600;
 
-const char * TITLE = "X4";
+const char * TITLE = "Harsh Engine";
 LARGE_INTEGER timeFreq, startTime;
 
 int getTime() {

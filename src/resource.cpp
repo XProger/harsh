@@ -371,7 +371,7 @@ MeshRes::~MeshRes() {
 //}
 
 //{ Sound
-SoundChannel Sound::channels[SND_MAX_CHANNELS];
+SoundChannel* Sound::channels;
 
 // Use IMA-ADPCM decoder: http://wiki.multimedia.cx/index.php?title=IMA_ADPCM
 int ima_index_table[] = {

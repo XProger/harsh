@@ -13,8 +13,8 @@
 #ifndef CORE_H
 #define CORE_H
 
-#include "game.h"
 #include "utils.h"
+#include "game.h"
 
 typedef int (*getTimePtr)(void);
 
