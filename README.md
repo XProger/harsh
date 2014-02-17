@@ -1,4 +1,4 @@
 harsh
 =====
 
-Harsh Engine (cross-platform game engine)
+Harsh Engine (cross-platform game framework)
