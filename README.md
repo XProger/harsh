@@ -10,7 +10,7 @@
 - Sound (ADPCM IMA)
 - improve resource builder (CRC32 chack)
 - 2D sprites, fonts
-- Windows Phone, Linux
+- WinRT, Linux
 - Direct3D
 - Skinned mesh animation
 - Material & Shader builder
