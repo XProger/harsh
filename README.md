@@ -7,6 +7,7 @@
 - LZO data packing
 
 <b><i>todo:</i></b>
+- Sound (ADPCM IMA)
 - improve resource builder (CRC32 chack)
 - 2D sprites, fonts
 - Windows Phone, Linux
@@ -14,3 +15,4 @@
 - Skinned mesh animation
 - Material & Shader builder
 - Particles
+- SSE2 & NEON math support
