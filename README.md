@@ -1,5 +1,5 @@
 <b>Harsh</b><br>
-<i>tiny cross-platform game engine</i>
+<i>cross-platform game engine</i>
 
 - Windows, Mac, iOS, Android, Flash
 - C++ (Obj-C, Java, AS3 for lib wrappers)
@@ -8,7 +8,7 @@
 
 <b><i>todo:</i></b>
 - Sound (ADPCM IMA)
-- improve resource builder (CRC32 chack)
+- improve resource builder (CRC32 check)
 - 2D sprites, fonts
 - WinRT, Linux
 - Direct3D
