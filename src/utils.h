@@ -306,11 +306,18 @@ struct mat4 {
 	}
 
 	vec3 operator * (const vec3 &v) {
-		vec3 r;
-		r.x = e00 * v.x + e01 * v.y + e02 * v.z + e03;
-		r.y = e10 * v.x + e11 * v.y + e12 * v.z + e13;
-		r.z = e20 * v.x + e21 * v.y + e22 * v.z + e23;
-		return r;
+		return vec3(
+			e00 * v.x + e01 * v.y + e02 * v.z + e03,
+			e10 * v.x + e11 * v.y + e12 * v.z + e13,
+			e20 * v.x + e21 * v.y + e22 * v.z + e23);
+	}
+
+	vec4 operator * (const vec4 &v) {
+		return vec4(
+			e00 * v.x + e01 * v.y + e02 * v.z + e03 * v.w,
+			e10 * v.x + e11 * v.y + e12 * v.z + e13 * v.w,
+			e20 * v.x + e21 * v.y + e22 * v.z + e23 * v.w,
+			e30 * v.x + e31 * v.y + e32 * v.z + e33 * v.w);
 	}
 
 	void identity(float s = 1) {

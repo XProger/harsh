@@ -250,6 +250,23 @@ void Shader::setParam(ShaderParam param, const void *value, int count) {
 
 //{ Material
 Material::Material(Stream *stream) {
+	fromStream(stream);
+}
+
+Material::Material(Hash hash) {
+	Stream *stream = new Stream(hash);
+	fromStream(stream);
+	delete stream;
+}
+
+Material::~Material() {
+	delete shader;
+	delete diffuse;
+	delete mask;
+	delete lightMap;
+}
+
+void Material::fromStream(Stream *stream) {
 	blending	= (BlendMode)stream->getInt();
 	depthWrite	= stream->getInt() != 0;
 	culling		= (CullMode)stream->getInt();	
@@ -259,13 +276,6 @@ Material::Material(Stream *stream) {
 	mask		= (h = stream->getInt()) ? new Texture(NULL, h) : NULL;
 	lightMap	= (h = stream->getInt()) ? new Texture(NULL, h) : NULL;
 	stream->getCopy(&param, sizeof(param));
-}
-
-Material::~Material() {
-	delete shader;
-	delete diffuse;
-	delete mask;
-	delete lightMap;
 }
 
 bool Material::bind() {
@@ -278,7 +288,7 @@ bool Material::bind() {
 	if (lightMap && !lightMap->bind(2))
 		return false;
 	
-	shader->setParam(spLMap, &param, 1);	
+//	shader->setParam(spLMap, &param, 1);	
 	Render::setBlending(blending);
 	Render::setCulling(culling);
 	Render::setDepthWrite(depthWrite);
@@ -337,6 +347,7 @@ void MeshRes::load(Stream *stream) {
 		iBuffer = new IndexBuffer(iData, iCount, iFormat);
 	} else {
 	// vertex buffer
+		stream->getCopy(&bbox, sizeof(bbox));
 		vCount  = stream->getInt();
 		iCount  = stream->getInt();
 		vFormat	= (VertexFormat)stream->getInt();

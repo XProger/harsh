@@ -26,6 +26,8 @@ struct SceneNode {
     mat4 rel_matrix, matrix;
 	bool visible;
 
+	Material *mEdge;
+
     SceneNode(SceneNode *parent, Stream *stream);
     virtual ~SceneNode();
 
@@ -80,6 +82,7 @@ struct Model : public SceneNode {
 #define CAMERA_MODE_FREE    0
 #define CAMERA_MODE_TARGET  1
 #define CAMERA_MODE_LOOKAT  2
+#define CAMERA_MODE_GAME	3
 
 struct Camera : public SceneNode {
     int mode;
@@ -97,6 +100,7 @@ struct Camera : public SceneNode {
 	void debugUpdate(float speed);
     void setup();
     bool checkVisible(const Box &v);
+	vec3 toWorld(const vec2 &screenPos, const vec4 &plane);
 };
 //}
 

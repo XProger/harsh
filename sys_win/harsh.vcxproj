@@ -16,6 +16,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\core.cpp" />
+    <ClCompile Include="..\src\enemy.cpp" />
     <ClCompile Include="..\src\game.cpp" />
     <ClCompile Include="..\src\renderGL.cpp" />
     <ClCompile Include="..\src\resource.cpp" />
@@ -25,6 +26,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\core.h" />
+    <ClInclude Include="..\src\enemy.h" />
     <ClInclude Include="..\src\game.h" />
     <ClInclude Include="..\src\render.h" />
     <ClInclude Include="..\src\resource.h" />
@@ -35,7 +37,7 @@
     <ProjectGuid>{3AA0D0E1-137A-4170-97C0-BE98F34D44D4}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>harsh</RootNamespace>
-    <ProjectName>harsh</ProjectName>
+    <ProjectName>fury</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
