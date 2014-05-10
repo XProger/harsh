@@ -162,6 +162,9 @@ void VertexBuffer::bind() {
 	Vertex_PT32		*vPT32 = NULL;
 	Vertex_PT34		*vPT34 = NULL;
 	Vertex_PT34s	*vPT34s = NULL;
+	Vertex_PTN_324	*vPTN_324 = NULL;
+	Vertex_PN_34	*vPN_34 = NULL;
+
 
 	switch (format) {
 		case VF_PT22 :
@@ -179,6 +182,15 @@ void VertexBuffer::bind() {
 		case VF_PT34s :
 			glVertexAttribPointer(vaTexCoord0, 4, GL_SHORT, false, VertexStride[format], &vPT34s->tc);
 			glVertexAttribPointer(vaCoord, 3, GL_FLOAT, false, VertexStride[format], &vPT34s->pos);
+			break;
+		case VF_PTN_324 :
+			glVertexAttribPointer(vaNormal, 4, GL_UNSIGNED_BYTE, true, VertexStride[format], &vPTN_324->n);
+			glVertexAttribPointer(vaTexCoord0, 2, GL_SHORT, false, VertexStride[format], &vPTN_324->tc);
+			glVertexAttribPointer(vaCoord, 3, GL_FLOAT, false, VertexStride[format], &vPTN_324->pos);
+			break;
+		case VF_PN_34 :
+			glVertexAttribPointer(vaNormal, 4, GL_UNSIGNED_BYTE, true, VertexStride[format], &vPN_34->n);
+			glVertexAttribPointer(vaCoord, 3, GL_FLOAT, false, VertexStride[format], &vPN_34->pos);
 			break;
 		default :
 			return;
@@ -249,6 +261,7 @@ void Render::resize(int width, int height) {
 
 void Render::resetStates() {
 	glEnableVertexAttribArray(vaCoord);
+	glEnableVertexAttribArray(vaNormal);
 	glEnableVertexAttribArray(vaTexCoord0);
 
 	setCulling(CULL_NONE);

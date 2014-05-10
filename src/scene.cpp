@@ -35,17 +35,18 @@ void Camera::updateMatrix() {
 	mView.identity();
 
     switch (mode) {
+        case CAMERA_MODE_GAME :
         case CAMERA_MODE_FREE :
-            mView.rotate(angle.z, vec3(0, 0, 1));
-            mView.rotate(angle.x, vec3(1, 0, 0));
-            mView.rotate(angle.y, vec3(0, 1, 0));
+            mView.rotate(-angle.z, vec3(0, 0, 1));
+            mView.rotate(-angle.x, vec3(1, 0, 0));
+            mView.rotate(-angle.y, vec3(0, 1, 0));
             mView.translate(vec3(-pos.x, -pos.y, -pos.z));
             break;
         case CAMERA_MODE_TARGET :
             mView.translate(vec3(0, 0, -dist));
-            mView.rotate(angle.z, vec3(0, 0, 1));
-            mView.rotate(angle.x, vec3(1, 0, 0));
-            mView.rotate(angle.y, vec3(0, 1, 0));
+            mView.rotate(-angle.z, vec3(0, 0, 1));
+            mView.rotate(-angle.x, vec3(1, 0, 0));
+            mView.rotate(-angle.y, vec3(0, 1, 0));
             mView.translate(vec3(-pos.x, -pos.y, -pos.z));
             break;
         case CAMERA_MODE_LOOKAT :
@@ -82,14 +83,14 @@ void Camera::debugUpdate(float speed) {
 	if (mode == CAMERA_MODE_FREE || mode == CAMERA_MODE_TARGET)
 		if (Core::input->touch[0].down) {
 			vec2 delta = Core::input->touch[0].pos - Core::input->touch[0].start;
-			angle.x += delta.y * 0.01f;
-			angle.y += delta.x * 0.01f;
+			angle.x -= delta.y * 0.01f;
+			angle.y -= delta.x * 0.01f;
 			angle.x = _min(_max(angle.x, -_PI *0.5f + _EPS), _PI * 0.5f - _EPS);
 			Core::input->touch[0].start = Core::input->touch[0].pos;
 		}
 
 	if (mode == CAMERA_MODE_FREE) {
-		vec3 dir = vec3(sinf(_PI - angle.y) * cosf(angle.x), -sinf(angle.x), cosf(_PI - angle.y) * cosf(angle.x));
+		vec3 dir = vec3(sinf(angle.y - _PI) * cosf(-angle.x), -sinf(-angle.x), cosf(angle.y - _PI) * cosf(-angle.x));
 		vec3 v = vec3(0, 0, 0);
 
 		if (Core::input->key['W']) v += dir;
@@ -121,9 +122,11 @@ void Camera::setup() {
     updateMatrix();
     updatePlanes();
 	Render::params.mViewProj = mViewProj;
+	Render::params.mViewInv = mView;//.inverse();
 }
 
 bool Camera::checkVisible(const Box &v) {
+	return true;
     for (int i = 0; i < 6; i++)
         if (planes[i].dot(v.max) < 0 &&
             planes[i].dot(vec3(v.min.x, v.max.y, v.max.z)) < 0 &&
@@ -136,6 +139,25 @@ bool Camera::checkVisible(const Box &v) {
             return false;
     return true;
 }
+
+vec3 Camera::toWorld(const vec2 &screenPos, const vec4 &plane) {
+	vec2 p = screenPos / vec2(Render::width, Render::height) * 2 - vec2(1, 1);
+//	vec4 v = mViewProj.inverse() * vec4(p.x, p.y, -1, 1);
+
+	vec4 v;
+	v = mProj.inverse() * vec4(p.x, p.y, -1, 1);
+	v = mView.inverse() * vec4(v.x, v.y, -1, 0);
+
+	vec3 dir = vec3(v.x, v.y, v.z).normal();
+	
+	vec3 n = vec3(plane.x, plane.y, plane.z);
+	float t = dir.dot(n);
+	if (t == 0) return vec3(0, 0, 0);
+	t = -(pos.dot(n) + plane.w) / t;
+	return pos + dir * t;
+}
+
+
 //}
 
 //{ Scene Node
@@ -254,6 +276,8 @@ void SceneNode::remove() {
 //{ Mesh Node
 Mesh::Mesh(SceneNode *parent, Hash hash) : SceneNode(parent, NULL) {
 	res = MeshRes::load(NULL, hash);
+	res->valid();
+	rel_bbox = res->bbox;
 }
 
 Mesh::~Mesh() {
@@ -262,9 +286,22 @@ Mesh::~Mesh() {
 
 void Mesh::render() {
 	if (!res || !res->valid()) return;
-	//Shader::setMatrixModel(matrix);
+	Shader::setMatrixModel(matrix);
+/*
+	if (material == Core::scene->mEdge) {
+		glLineWidth(3.0f);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		glEnable(GL_LINE_SMOOTH);
+		glEnable(GL_BLEND);
+	}
+*/
 	if (material->bind())
 		Render::drawTriangles(res->iBuffer, res->vBuffer, 0, res->iCount / 3);
+/*
+	if (material == Core::scene->mEdge) {
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	}
+*/
 }
 //}
 
@@ -280,11 +317,11 @@ Model::Model(SceneNode *parent, Hash hash) {
 
 //{ Scene
 Scene::Scene() : SceneNode(NULL, NULL) {
-	//
+	mEdge = new Material(Stream::getHash("material/edge.xmt"));
 }
 
 Scene::~Scene() {
-    //
+    delete mEdge;
 }
 
 void Scene::load(const char *name) {
@@ -329,7 +366,6 @@ void Scene::render() {
 	camera->setup();
 
 	Shader::setMatrixViewProj(Render::params.mViewProj);
-	Shader::setMatrixModel(matrix);
 
 	checkVisible();
 

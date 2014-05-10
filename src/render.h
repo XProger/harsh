@@ -145,6 +145,8 @@ enum VertexFormat {
 	VF_PT32,
 	VF_PT34,
 	VF_PT34s,
+	VF_PTN_324,
+	VF_PN_34,
 	VF_MAX
 };
 
@@ -170,12 +172,25 @@ struct Vertex_PT34s {
 	short tc[4];
 };
 
+struct Vertex_PTN_324 {
+	vec3 pos;
+	vec2 tc;
+	unsigned char n[4];
+};
+
+struct Vertex_PN_34 {
+	vec3 pos;
+	unsigned char n[4];
+};
+
 const int VertexStride[VF_MAX] = {
 	sizeof(Vertex_P3),
 	sizeof(Vertex_PT22),
 	sizeof(Vertex_PT32),
 	sizeof(Vertex_PT34),
-	sizeof(Vertex_PT34s)
+	sizeof(Vertex_PT34s),
+	sizeof(Vertex_PTN_324),
+	sizeof(Vertex_PN_34)
 };
 
 struct IndexBuffer {
@@ -197,11 +212,12 @@ struct VertexBuffer {
 };
 
 struct RenderParams {
-	mat4 mViewProj, mModel;
+	mat4 mViewProj, mModel, mViewInv;
 	struct {
 		vec3 pos;
 	} light;
 	vec4 color;
+	vec4 edge;
 };
 
 struct Render {
@@ -259,18 +275,22 @@ struct ShaderParamInfo {
 enum ShaderParam {
 	spMatrixViewProj,
 	spMatrixModel,
+	spMatrixViewInv,
+	spEdge,
 //	spColor,
-//	spLightPos,
-	spLMap,
+	spLightPos,
+//	spLMap,
 	SP_MAX
 };
 
 const ShaderParamInfo SHADER_PARAM_INFO[SP_MAX] = {
 	{utMat4, "uViewProjMatrix", sizeof(mat4), 1, 0, &Render::params.mViewProj},
 	{utMat4, "uModelMatrix", 	sizeof(mat4), 1, 4, &Render::params.mModel},
+	{utMat4, "uViewInvMatrix", 	sizeof(mat4), 1, 8, &Render::params.mViewInv},
+	{utVec4, "uEdge", 			sizeof(vec4), 1, 12, &Render::params.edge},
 //	{utVec4, "uColor", 			sizeof(vec4), 1, 0, &Render::params.color},
-//	{utVec3, "uLightPos", 		sizeof(vec3), 1, 0, &Render::params.light.pos},
-	{utVec4, "uLMap",			sizeof(vec4), 1, 8, NULL},
+	{utVec3, "uLightPos", 		sizeof(vec3), 1, 0, &Render::params.light.pos},
+//	{utVec4, "uLMap",			sizeof(vec4), 1, 8, NULL},
 };
 
 #endif // RENDER_H
