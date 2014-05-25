@@ -26,8 +26,6 @@ struct SceneNode {
     mat4 rel_matrix, matrix;
 	bool visible;
 
-	Material *mEdge;
-
     SceneNode(SceneNode *parent, Stream *stream);
     virtual ~SceneNode();
 

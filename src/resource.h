@@ -112,6 +112,7 @@ public:
 	static void setMatrixViewProj(const mat4 &value)    { setParam(spMatrixViewProj, &value); }
 	static void setMatrixModel(const mat4 &value)       { setParam(spMatrixModel, &value); }
 //    static void setColor(const vec4 &value)             { setParam(spColor, &value); }
+    static void setViewPos(const vec3 &value)			{ setParam(spViewPos, &value); }
     static void setLightPos(const vec3 &value)          { setParam(spLightPos, &value); }
 	static void setParam(ShaderParam param, const void *value);
 	void setParam(ShaderParam param, const void *value, int count);  // immediately
@@ -179,7 +180,7 @@ protected:
 public:
 	VertexBuffer	*vBuffer;
 	IndexBuffer		*iBuffer;
-	int				iCount, vCount;
+	int				iCount, vCount, bCount;
 	Box				bbox;
 	char			*vData, *iData;
 	IndexFormat		iFormat;

@@ -212,12 +212,14 @@ struct VertexBuffer {
 };
 
 struct RenderParams {
-	mat4 mViewProj, mModel, mViewInv;
+	mat4 mViewProj, mModel;
 	struct {
 		vec3 pos;
 	} light;
+	struct {
+		vec3 pos;
+	} camera;
 	vec4 color;
-	vec4 edge;
 };
 
 struct Render {
@@ -275,9 +277,8 @@ struct ShaderParamInfo {
 enum ShaderParam {
 	spMatrixViewProj,
 	spMatrixModel,
-	spMatrixViewInv,
-	spEdge,
 //	spColor,
+	spViewPos,
 	spLightPos,
 //	spLMap,
 	SP_MAX
@@ -286,9 +287,8 @@ enum ShaderParam {
 const ShaderParamInfo SHADER_PARAM_INFO[SP_MAX] = {
 	{utMat4, "uViewProjMatrix", sizeof(mat4), 1, 0, &Render::params.mViewProj},
 	{utMat4, "uModelMatrix", 	sizeof(mat4), 1, 4, &Render::params.mModel},
-	{utMat4, "uViewInvMatrix", 	sizeof(mat4), 1, 8, &Render::params.mViewInv},
-	{utVec4, "uEdge", 			sizeof(vec4), 1, 12, &Render::params.edge},
 //	{utVec4, "uColor", 			sizeof(vec4), 1, 0, &Render::params.color},
+	{utVec3, "uViewPos", 		sizeof(vec3), 1, 0, &Render::params.camera.pos},
 	{utVec3, "uLightPos", 		sizeof(vec3), 1, 0, &Render::params.light.pos},
 //	{utVec4, "uLMap",			sizeof(vec4), 1, 8, NULL},
 };

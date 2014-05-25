@@ -185,7 +185,7 @@ void VertexBuffer::bind() {
 			break;
 		case VF_PTN_324 :
 			glVertexAttribPointer(vaNormal, 4, GL_UNSIGNED_BYTE, true, VertexStride[format], &vPTN_324->n);
-			glVertexAttribPointer(vaTexCoord0, 2, GL_SHORT, false, VertexStride[format], &vPTN_324->tc);
+			glVertexAttribPointer(vaTexCoord0, 2, GL_FLOAT, false, VertexStride[format], &vPTN_324->tc);
 			glVertexAttribPointer(vaCoord, 3, GL_FLOAT, false, VertexStride[format], &vPTN_324->pos);
 			break;
 		case VF_PN_34 :
@@ -450,8 +450,10 @@ bool Render::setShader(ShaderObj obj) {
 }
 
 void Render::setShaderUniform(UniformType type, int count, const void *value, const char *name, int &index) {
-	if (index == -1 && (index = glGetUniformLocation(m_active_shader, name)) == -1)
+	if (index == -1 && (index = glGetUniformLocation(m_active_shader, name)) == -1) {
+		LOG("shader: uniform %s not defined\n", name);
 		return;
+	}
 
 	switch (type) {
 		case utVec1	: glUniform1fv(index, count, (GLfloat*)value); break;

@@ -55,7 +55,6 @@ void Camera::updateMatrix() {
     }
 	matrix = mView.inverse();
 
-// -------------------------------------------- TO-DO: manual aspect
     mProj.identity();
     mProj.perspective(FOV, (float)Render::width / (float)Render::height, zNear, zFar);
 	mViewProj = mProj * mView;
@@ -122,7 +121,7 @@ void Camera::setup() {
     updateMatrix();
     updatePlanes();
 	Render::params.mViewProj = mViewProj;
-	Render::params.mViewInv = mView;//.inverse();
+	Render::params.camera.pos = matrix.getPos();
 }
 
 bool Camera::checkVisible(const Box &v) {
@@ -317,11 +316,11 @@ Model::Model(SceneNode *parent, Hash hash) {
 
 //{ Scene
 Scene::Scene() : SceneNode(NULL, NULL) {
-	mEdge = new Material(Stream::getHash("material/edge.xmt"));
+	//
 }
 
 Scene::~Scene() {
-    delete mEdge;
+	//
 }
 
 void Scene::load(const char *name) {
@@ -366,6 +365,7 @@ void Scene::render() {
 	camera->setup();
 
 	Shader::setMatrixViewProj(Render::params.mViewProj);
+	Shader::setViewPos(Render::params.camera.pos);
 
 	checkVisible();
 

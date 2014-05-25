@@ -98,8 +98,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 			quit = true;
 			break;
 		case WM_MOUSEMOVE :
-			if (wParam & MK_LBUTTON)
-				Core::touch(0, TOUCH_MOVE, LOWORD(lParam), HIWORD(lParam));
+			Core::touch(wParam & MK_LBUTTON ? 0 : (wParam & MK_RBUTTON ? 1 : 2), TOUCH_MOVE, LOWORD(lParam), HIWORD(lParam));
 			break;
 		case WM_LBUTTONDOWN :
 		case WM_LBUTTONUP :
@@ -156,6 +155,7 @@ int main(int argc, char *argv[]) {
 	Core::reset();
 	Core::resume();
 	Core::resize(WIDTH, HEIGHT);
+	Core::update();
 #ifndef NO_SOUND
 	soundInit(handle);
 #endif
@@ -175,8 +175,6 @@ int main(int argc, char *argv[]) {
 			Core::render();
 			SwapBuffers(dc);
 		}
-
-	// finalization
 	Core::deinit();
 #ifndef NO_SOUND
 	soundFree();
@@ -187,8 +185,6 @@ int main(int argc, char *argv[]) {
 	wglDeleteContext(rc);
 	ReleaseDC(handle, dc);
 	DestroyWindow(handle);
-
-
 
 	ExitProcess(0);
 	return 0;

@@ -96,10 +96,10 @@ void Stream::deinit() {
         fclose(f);
 }
 
-unsigned int Stream::getHash(const char *name) {
+Hash Stream::getHash(const char *name) {
 // SuperFastHash algorithm
     int len = strlen(name);
-	unsigned int hash = len, tmp;
+	Hash hash = len, tmp;
 	int rem;
 
     if (len <= 0 || name == NULL) return 0;
@@ -140,7 +140,7 @@ unsigned int Stream::getHash(const char *name) {
     return hash;
 }
 
-Stream::Stream(unsigned int hash) : ptr(0), pos(0), size(0) {
+Stream::Stream(Hash hash) : ptr(0), pos(0), size(0) {
     for (int i = 0; i < packFilesCount; i++)
         if (packFiles[i].hash == hash) {
             PackFile &p = packFiles[i];

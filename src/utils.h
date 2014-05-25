@@ -48,8 +48,10 @@
 #define _SQRT2		sqrtf(2.0f)
 #define _INV_SQRT2	(1.0f/_SQRT2)
 
+typedef unsigned int Hash;
+
 struct PackFile {
-	unsigned int hash;
+	Hash hash;
 	int offset, size, csize;
 };
 
@@ -68,12 +70,11 @@ public:
 	static void init(const char *packName);
 	static void deinit();
 	static int getFileOffset(unsigned int hash, int *size);
-	static unsigned int getHash(const char *name);
+	static Hash getHash(const char *name);
 
 	static int packSet;
 
-
-	Stream(unsigned int hash);
+	Stream(Hash hash);
 	Stream(void *_ptr, int _size);
 	~Stream();
 	bool    eof() { return pos >= size; }
@@ -93,7 +94,6 @@ struct vec2 {
 	explicit vec2(float value = 0) : x(value), y(value) {}
 	explicit vec2(float x, float y) : x(x), y(y) {}
 
-//	inline vec2& operator =  (const vec2 &v) { x=v.x;  y=v.y;  return *this; }
 	inline vec2& operator += (const vec2 &v) { x+=v.x; y+=v.y; return *this; }
 	inline vec2& operator -= (const vec2 &v) { x-=v.x; y-=v.y; return *this; }
 	inline vec2& operator *= (const vec2 &v) { x*=v.x; y*=v.y; return *this; }
@@ -128,7 +128,6 @@ struct vec3 {
 	vec3(float value = 0) : x(value), y(value), z(value) {}
 	vec3(float x, float y, float z) : x(x), y(y), z(z) {}
 
-//	inline vec3& operator =  (vec3 &v) { x=v.x;  y=v.y;  z=v.z;  return *this; }
 	inline vec3& operator += (const vec3 &v) { x+=v.x; y+=v.y; z+=v.z; return *this; }
 	inline vec3& operator -= (const vec3 &v) { x-=v.x; y-=v.y; z-=v.z; return *this; }
 	inline vec3& operator *= (const vec3 &v) { x*=v.x; y*=v.y; z*=v.z; return *this; }
@@ -565,7 +564,7 @@ public:
     Array() : items(NULL), mLength(0) {}
     ~Array() { delete[] items; }
 
-    void*& get(const int index) const {
+    void* get(const int index) {
         return items[index];
     }
 
@@ -624,6 +623,24 @@ public:
 };
 
 struct String {
+	char *data;
+
+	String(const char *str = 0) : data(String::copy(str)) {}
+	~String() { delete data; }
+
+	bool operator == (const char *str) const { 
+		return String::cmp(data, str) == 0;
+	}
+
+	String operator + (const char *str) {
+		int d1 = String::length(data),
+			d2 = String::length(str);
+		char *res = new char[d1 + d2 + 1];
+		if (d1) memcpy(res, data, d1);
+		if (d2) memcpy(&res[d1], str, d2);
+		res[d1 + d2] = 0;
+		return String(res);
+	}
 
 	static char* copy(const char *str) {
 		if (!str)
@@ -641,6 +658,13 @@ struct String {
 
 	static int length(const char *str) {
 		return str ? strlen(str) : 0;
+	}
+
+	static void replace(char *str, char src, char dst) {
+		int len = length(str);
+		for (int i = 0; i < len; i++)
+			if (str[i] == src)
+				str[i] = dst;
 	}
 };
 

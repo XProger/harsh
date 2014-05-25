@@ -294,48 +294,6 @@ bool Material::bind() {
 	Render::setDepthWrite(depthWrite);
 	return true;
 }
-
-/*
-void MaterialRes::load(Stream *stream) {
-	if (!stream) {
-		m_valid = false;
-		LOG("fuck!\n");
-		return;
-	}
-
-	mode		= (RenderMode)stream->getInt();
-	blend		= (BlendMode)stream->getInt();
-	depthWrite	= stream->getInt() != 0;
-	shader		= new Shader(0, stream->getInt());
-	diffuse		= new Texture(NULL, stream->getInt());	
-	lightMap	= new Texture(NULL, stream->getInt());
-	ambientMap	= new Texture(NULL, stream->getInt());
-	stream->getCopy(&param, sizeof(param));
-
-	m_valid = true;
-}
-
-Material::Material(const char *shaderName, const char *diffuseName) {
-	res = new MaterialRes(0);
-	res->shader = new Shader(shaderName);
-	res->diffuse = new Texture(diffuseName);
-}
-
-bool Material::bind() {
-	if (!res || !res->valid() || res->mode != Render::mode || !res->shader->bind())
-		return false;
-	if (res->diffuse && !res->diffuse->bind(0))
-		return false;
-	if (res->lightMap && !res->lightMap->bind(2))
-		return false;
-	if (res->ambientMap && !res->ambientMap->bind(3))
-		return false;
-	res->shader->setParam(spLMap, &res->param, 2);	
-	Render::setBlend(res->blend);
-	Render::setDepthWrite(res->depthWrite);
-	return true;
-}
-*/
 //}
 
 //{ Mesh Resource
@@ -350,6 +308,7 @@ void MeshRes::load(Stream *stream) {
 		stream->getCopy(&bbox, sizeof(bbox));
 		vCount  = stream->getInt();
 		iCount  = stream->getInt();
+		bCount  = stream->getInt();
 		vFormat	= (VertexFormat)stream->getInt();
 		iFormat = (IndexFormat)stream->getInt();
 		vBuffer = new VertexBuffer(stream->getData(vCount * VertexStride[vFormat]), vCount, vFormat);
