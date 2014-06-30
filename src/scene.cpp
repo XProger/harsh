@@ -31,6 +31,11 @@ Camera::~Camera() {
     //
 }
 
+void Camera::update() {
+    updateMatrix();
+    updatePlanes();
+}
+
 void Camera::updateMatrix() {
 	mView.identity();
 
@@ -56,7 +61,7 @@ void Camera::updateMatrix() {
 	matrix = mView.inverse();
 
     mProj.identity();
-    mProj.perspective(FOV, (float)Render::width / (float)Render::height, zNear, zFar);
+    mProj.perspective(FOV, (float)Render::width / (float)Render::height, zNear, zFar, Render::width > Render::height);
 	mViewProj = mProj * mView;
 }
 
@@ -92,10 +97,10 @@ void Camera::debugUpdate(float speed) {
 		vec3 dir = vec3(sinf(angle.y - _PI) * cosf(-angle.x), -sinf(-angle.x), cosf(angle.y - _PI) * cosf(-angle.x));
 		vec3 v = vec3(0, 0, 0);
 
-		if (Core::input->key['W']) v += dir;
-		if (Core::input->key['S']) v -= dir;
-		if (Core::input->key['D']) v += dir.cross(vec3(0, 1, 0));
-		if (Core::input->key['A']) v -= dir.cross(vec3(0, 1, 0));
+		if (Core::input->down[IK_W]) v += dir;
+		if (Core::input->down[IK_S]) v -= dir;
+		if (Core::input->down[IK_D]) v += dir.cross(vec3(0, 1, 0));
+		if (Core::input->down[IK_A]) v -= dir.cross(vec3(0, 1, 0));
 
 		if (Core::input->touch[1].down) {
 //			vec2 d = Core::input->touch[1].pos - Core::input->touch[1].start;
@@ -118,10 +123,8 @@ void Camera::debugUpdate(float speed) {
 }
 
 void Camera::setup() {
-    updateMatrix();
-    updatePlanes();
 	Render::params.mViewProj = mViewProj;
-	Render::params.camera.pos = matrix.getPos();
+	Render::params.camera.pos = matrix.inverse().getPos();
 }
 
 bool Camera::checkVisible(const Box &v) {
@@ -140,7 +143,7 @@ bool Camera::checkVisible(const Box &v) {
 }
 
 vec3 Camera::toWorld(const vec2 &screenPos, const vec4 &plane) {
-	vec2 p = screenPos / vec2(Render::width, Render::height) * 2 - vec2(1, 1);
+	vec2 p = vec2(screenPos.x, Render::height - screenPos.y) / vec2(Render::width, Render::height) * 2 - vec2(1, 1);
 //	vec4 v = mViewProj.inverse() * vec4(p.x, p.y, -1, 1);
 
 	vec4 v;
@@ -152,8 +155,16 @@ vec3 Camera::toWorld(const vec2 &screenPos, const vec4 &plane) {
 	vec3 n = vec3(plane.x, plane.y, plane.z);
 	float t = dir.dot(n);
 	if (t == 0) return vec3(0, 0, 0);
-	t = -(pos.dot(n) + plane.w) / t;
+	t = -(pos.dot(n) - plane.w) / t;
 	return pos + dir * t;
+}
+
+vec4 Camera::pProject(const vec3 &pos) {
+	return mViewProj * vec4(pos, 1.0f);
+}
+
+vec3 Camera::pUnProject(const vec4 &pos) {
+	return (mViewProj.inverse() * pos).xyz();
 }
 
 
@@ -325,31 +336,25 @@ Scene::~Scene() {
 
 void Scene::load(const char *name) {
 	Stream *stream = new Stream(Stream::getHash(name));
-
-//	FILE *f = fopen("lm.dat", "wb");
+	Mesh *mesh;
 
 	int count = stream->getInt();
 	while (count > 0) {
-		//	int nodeType = stream->getInt();
-	//	switch (nodeType) {
-	//		case NT_MESH :
-				Mesh *mesh = new Mesh(this, stream->getInt());
+		int nodeType = stream->getInt();
+		switch (nodeType) {
+			case 'm' :
+				mesh = new Mesh(this, stream->getInt());
 				stream->getCopy(&mesh->rel_matrix, sizeof(mesh->rel_matrix));
-				stream->getCopy(&mesh->rel_bbox, sizeof(mesh->rel_bbox));
 				mesh->matrix = mesh->rel_matrix;
-				mesh->material = new Material(stream);
-/*
-				fwrite(&mesh->material->lightMap->res->hash, 4, 1, f);
-				fwrite(&mesh->material->ambientMap->res->hash, 4, 1, f);
-				fwrite(&mesh->material->param, sizeof(vec4) *2, 1, f);
-				*/
+				mesh->material = new Material(Stream::getHash("material/none.xmt"));
 				add(mesh);
-	//			break;
-	//	}
+				break;
+			default :
+				stream->seek(sizeof(Hash) + sizeof(mat4));
+		}
 		count--;
 	}
 
-//	fclose(f);
 	delete stream;
 }
 
@@ -359,6 +364,11 @@ void Scene::checkVisible() {
 		c->visible = Core::scene->camera->checkVisible(c->bbox);
         c = c->next;
     }
+}
+
+void Scene::update() {
+	camera->update();
+	SceneNode::update();
 }
 
 void Scene::render() {

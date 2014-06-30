@@ -15,7 +15,7 @@
 
 #include <stdio.h>
 #include <math.h>
-
+#include <algorithm>
 #ifdef ANDROID
 	#include <android/log.h>
 	#define LOG_TAG "game"
@@ -35,10 +35,6 @@
 	#define LOG(...) printf(__VA_ARGS__)
 #endif
 
-#define _min(a,b) (((a)<(b))?(a):(b))
-#define _max(a,b) (((a)>(b))?(a):(b))
-#define _sign(x)  ((x)<0.?-1:((x)>0.?1:0.))
-
 #define randf() ((float)rand()/RAND_MAX)
 
 #define _EPS		1e-6f
@@ -47,6 +43,16 @@
 #define _RAD2DEG	(180.0f / _PI)
 #define _SQRT2		sqrtf(2.0f)
 #define _INV_SQRT2	(1.0f/_SQRT2)
+
+static float _min(float a, float b) { return a < b ? a : b; }
+static float _max(float a, float b) { return a > b ? a : b; }
+static float _sign(float x) { return x < 0.0f ? -1.0f : (x > 0.0f ? 1.0f : 0.0f); }
+static float _clamp(float x, float a, float b) { return x < a ? a : (x > b ? b : x); }
+
+static int _min(int a, int b) { return a < b ? a : b; }
+static int _max(int a, int b) { return a > b ? a : b; }
+static int _sign(int x) { return x < 0.0f ? -1 : (x > 0 ? 1 : 0); }
+static int _clamp(int x, int a, int b) { return x < a ? a : (x > b ? b : x); }
 
 typedef unsigned int Hash;
 
@@ -91,14 +97,16 @@ public:
 struct vec2 {
 	float x, y;
 
-	explicit vec2(float value = 0) : x(value), y(value) {}
+	explicit vec2(float value = 0.0f) : x(value), y(value) {}
 	explicit vec2(float x, float y) : x(x), y(y) {}
+	explicit vec2(const int value) : x((float)value), y((float)value) {}
+	explicit vec2(const int x, const int y) : x((float)x), y((float)y) {}
 
 	inline vec2& operator += (const vec2 &v) { x+=v.x; y+=v.y; return *this; }
 	inline vec2& operator -= (const vec2 &v) { x-=v.x; y-=v.y; return *this; }
 	inline vec2& operator *= (const vec2 &v) { x*=v.x; y*=v.y; return *this; }
     inline vec2& operator /= (const vec2 &v) { x/=v.x; y/=v.y; return *this; }
-	inline vec2& operator *= (float s) { x*=s;   y*=s;   return *this; }
+	inline vec2& operator *= (float s) { x*=s; y*=s; return *this; }
 	inline vec2& operator /= (float s) { float p=1.0f/s; x*=p; y*=p; return *this; }
 
 	inline vec2 operator + (const vec2 &v) const { return vec2(x+v.x, y+v.y); }
@@ -123,16 +131,22 @@ struct vec2 {
 };
 
 struct vec3 {
-	float x, y, z;
+	union {
+		struct { float x, y, z; };
+		float v[3];
+	};
 
-	vec3(float value = 0) : x(value), y(value), z(value) {}
+	vec3(float value = 0.0f) : x(value), y(value), z(value) {}
 	vec3(float x, float y, float z) : x(x), y(y), z(z) {}
+	vec3(const vec2 &xy, float z) : x(xy.x), y(xy.y), z(z) {}
+
+	vec2& xy() { return *((vec2*)&x); }
 
 	inline vec3& operator += (const vec3 &v) { x+=v.x; y+=v.y; z+=v.z; return *this; }
 	inline vec3& operator -= (const vec3 &v) { x-=v.x; y-=v.y; z-=v.z; return *this; }
 	inline vec3& operator *= (const vec3 &v) { x*=v.x; y*=v.y; z*=v.z; return *this; }
     inline vec3& operator /= (const vec3 &v) { x/=v.x; y/=v.y; z/=v.z; return *this; }
-	inline vec3& operator *= (float s) { x*=s;   y*=s;   z*=s;   return *this; }
+	inline vec3& operator *= (float s) { x*=s; y*=s; z*=s; return *this; }
 	inline vec3& operator /= (float s) { float p=1.0f/s; x*=p; y*=p; z*=p; return *this; }
 
 	inline vec3 operator + (const vec3 &v) const { return vec3(x+v.x, y+v.y, z+v.z); }
@@ -173,10 +187,17 @@ struct vec3 {
 };
 
 struct vec4 {
-	float x, y, z, w;
+	union {
+		struct { float x, y, z, w; };				
+		float v[4];
+	};
 
-	vec4(float value = 0) : x(value), y(value), z(value), w(value) {}
+	vec4(float value = 0.0f) : x(value), y(value), z(value), w(value) {}
 	vec4(float x, float y, float z, float w) : x(x), y(y), z(z), w(w) {}
+	vec4(const vec3 &xyz, float w) : x(xyz.x), y(xyz.y), z(xyz.z), w(w) {}
+
+	vec3& xyz() { return *((vec3*)&x); }
+
 	inline float dot(const vec3 &v) const { return x*v.x + y*v.y + z*v.z + w; }
 };
 
@@ -463,11 +484,20 @@ struct mat4 {
 		e10 = e20 = e30 = e01 = e21 = e31 = e03 = e13 = e33 = 0;
 	}
 
-	void perspective(float FOV, float aspect, float znear, float zfar) {
-		float x, y;
-		y = znear * tanf(FOV * 0.5f * _DEG2RAD);
-		x = y * aspect;
+	void perspective(float FOV, float aspect, float znear, float zfar, bool vertFOV) {
+		float x, y, k = znear * tanf(FOV * 0.5f * _DEG2RAD);
+		if (vertFOV) {
+			y = k;
+			x = y * aspect;
+		} else {
+			x = k;
+			y = x / aspect;
+		}
 		frustum(-x, x, -y, y, znear, zfar);
+	}
+
+	void perspective(float FOV, float aspect, float znear, float zfar) {
+		perspective(FOV, aspect, znear, zfar, true);
 	}
 
 	void lookAt(const vec3 &pos, const vec3 &target, const vec3 &up) {

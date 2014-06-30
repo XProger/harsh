@@ -254,8 +254,7 @@ void Render::deinit() {
 }
 
 void Render::resize(int width, int height) {
-    setViewport(0, 0, width, height);
-    Render::width = width;
+    Render::width  = width;
     Render::height = height;
 }
 

@@ -93,12 +93,15 @@ struct Camera : public SceneNode {
     Camera(Stream *stream = NULL);
     virtual ~Camera();
 
+	virtual void update();
     void updateMatrix();
     void updatePlanes();
 	void debugUpdate(float speed);
     void setup();
     bool checkVisible(const Box &v);
 	vec3 toWorld(const vec2 &screenPos, const vec4 &plane);
+	vec4 pProject(const vec3 &pos);
+	vec3 pUnProject(const vec4 &pos);
 };
 //}
 
@@ -110,6 +113,7 @@ struct Scene : public SceneNode {
     virtual ~Scene();
 	void load(const char *name);
 	void checkVisible();
+	virtual void update();
     virtual void render();
 };
 //}

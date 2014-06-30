@@ -15,31 +15,6 @@
 #include "resource.h"
 #include "scene.h"
 
-//{ Input ---------------------------------------------
-void Input::reset() {
-	memset(this, 0, sizeof(Input));
-}
-
-void Input::process(int id, int state, int x, int y) {
-	switch (state) {
-		case TOUCH_DOWN :
-			touch[id].start = touch[id].pos = vec2((float)x, (float)y);
-			touch[id].down = true;
-			break;
-		case TOUCH_UP :
-			touch[id].down = false;
-			break;
-		case TOUCH_MOVE :
-			touch[id].pos = vec2((float)x, (float)y);
-			break;
-		case TOUCH_KEYDOWN :
-		case TOUCH_KEYUP   :
-			key[id] = state == TOUCH_KEYDOWN;
-			break;
-	}
-}
-//}
-
 //{ Core ----------------------------------------------
 float Core::deltaTime;
 int Core::lastTime, Core::fpsTime, Core::fps;
@@ -50,7 +25,8 @@ Game	*Core::game;
 
 void Core::init(const char *path, getTimePtr getTime) {
 	LOG("Core::init\n");
-    input = new Input();
+
+	input = new Input();
 	Core::getTime = getTime;
     Stream::init(path);
     Render::init();
@@ -58,7 +34,7 @@ void Core::init(const char *path, getTimePtr getTime) {
     Sound::init();
 
     scene = new Scene();
-    game = new Game();
+	game = new Game();
     fpsTime = getTime();
     lastTime = fpsTime;
     fps = 0;
@@ -67,11 +43,17 @@ void Core::init(const char *path, getTimePtr getTime) {
 void Core::deinit() {
 	LOG("Core::deinit\n");
     delete game;
+	LOG("Core::deinit\n");
     delete scene;
+	LOG("Core::deinit\n");
     delete input;
+	LOG("Core::deinit\n");
 	Sound::deinit();
+	LOG("Core::deinit\n");
     Resource::deinit();
+	LOG("Core::deinit\n");
     Render::deinit();
+	LOG("Core::deinit\n");
 }
 
 void Core::pause() {
@@ -82,6 +64,7 @@ void Core::resume() {
 	LOG("Core::resume\n");
 	lastTime = getTime();
 	Resource::loading();
+	game->resume();
 }
 
 void Core::reset() {
@@ -122,9 +105,8 @@ void Core::render() {
     }
 }
 
-void Core::touch(int id, int state, int x, int y) {
-	input->process(id, state, x, y);
-    game->touch(id, state, x, y);
-//    LOG("state: %d id: %d\n", state, id);
+void Core::inputEvent(const InputEvent &e) {
+	input->inputEvent(e);
+    game->inputEvent(e);
 }
 //}

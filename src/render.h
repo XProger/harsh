@@ -277,7 +277,7 @@ struct ShaderParamInfo {
 enum ShaderParam {
 	spMatrixViewProj,
 	spMatrixModel,
-//	spColor,
+	spColor,
 	spViewPos,
 	spLightPos,
 //	spLMap,
@@ -287,7 +287,7 @@ enum ShaderParam {
 const ShaderParamInfo SHADER_PARAM_INFO[SP_MAX] = {
 	{utMat4, "uViewProjMatrix", sizeof(mat4), 1, 0, &Render::params.mViewProj},
 	{utMat4, "uModelMatrix", 	sizeof(mat4), 1, 4, &Render::params.mModel},
-//	{utVec4, "uColor", 			sizeof(vec4), 1, 0, &Render::params.color},
+	{utVec4, "uColor", 			sizeof(vec4), 1, 0, &Render::params.color},
 	{utVec3, "uViewPos", 		sizeof(vec3), 1, 0, &Render::params.camera.pos},
 	{utVec3, "uLightPos", 		sizeof(vec3), 1, 0, &Render::params.light.pos},
 //	{utVec4, "uLMap",			sizeof(vec4), 1, 8, NULL},

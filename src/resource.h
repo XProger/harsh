@@ -111,7 +111,7 @@ public:
 	bool bind();
 	static void setMatrixViewProj(const mat4 &value)    { setParam(spMatrixViewProj, &value); }
 	static void setMatrixModel(const mat4 &value)       { setParam(spMatrixModel, &value); }
-//    static void setColor(const vec4 &value)             { setParam(spColor, &value); }
+    static void setColor(const vec4 &value)             { setParam(spColor, &value); }
     static void setViewPos(const vec3 &value)			{ setParam(spViewPos, &value); }
     static void setLightPos(const vec3 &value)          { setParam(spLightPos, &value); }
 	static void setParam(ShaderParam param, const void *value);
@@ -196,7 +196,7 @@ public:
 
 //{ Sound
 #define SND_MAX_CHANNELS 32
-#define _clamp16s(x) (x < -0x8000 ? -0x8000 : (x > 0x7FFF ? 0x7FFF : x))
+#define clamp16s(x) (x < -0x8000 ? -0x8000 : (x > 0x7FFF ? 0x7FFF : x))
 
 struct IMA_STATE {
 	int amp, idx;
@@ -214,8 +214,8 @@ struct SoundFrame {
 		R = (int)(M * _min(1.0f, pan + 1.0f));
     }
     inline SoundFrame& operator += (const SoundFrame &s) {
-    	L = _clamp16s((int)L + s.L);
-    	R = _clamp16s((int)R + s.R);
+    	L = clamp16s((int)L + s.L);
+    	R = clamp16s((int)R + s.R);
     	return *this;
 	}
 };

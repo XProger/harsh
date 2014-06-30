@@ -20,7 +20,7 @@ bool quit = false;
 const int WIDTH	 = 800;
 const int HEIGHT = 600;
 
-const char * TITLE = "Harsh Engine";
+const char * TITLE = "Harsh Engine";	
 LARGE_INTEGER timeFreq, startTime;
 
 int getTime() {
@@ -74,45 +74,100 @@ void soundFree() {
 }
 #endif
 
+InputKey convKey(int key) {
+	if (key < 0 || key > 255) return IK_NONE;
+	static const unsigned char keys[256] = {
+		0,0,0,0,0,0,0,0, IK_BACK, IK_TAB, 0,0,0, IK_ENTER, 0,0,
+		IK_SHIFT, IK_CTRL, IK_ALT, 0,0,0,0,0,0,0,0, IK_ESC, 0,0,0,0,
+		IK_SPACE, IK_PGUP, IK_PGDOWN, IK_END, IK_HOME, IK_LEFT, IK_UP, IK_RIGHT, IK_DOWN, IK_INS, IK_DEL,
+		IK_0, IK_1, IK_2, IK_3, IK_4, IK_5, IK_6, IK_7, IK_8, IK_9, IK_A, IK_B, IK_C, IK_D, IK_E, IK_F,
+		IK_G, IK_H, IK_I, IK_J, IK_K, IK_L, IK_M, IK_N, IK_O, IK_P, IK_Q, IK_R, IK_S, IK_T, IK_U, IK_V,
+		IK_W, IK_X, IK_Y, IK_Z, 0,0,0,0,0,0,0,0,0,0,0,0,
+		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+		0,0,0,0,0,0,0,0,0,0,0, IK_PLUS, IK_MINUS, 0,0,0,
+		IK_TILDE, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	};
+	return (InputKey)keys[key];
+}
+
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
 	switch (message) {
 		#ifndef NO_SOUND
-		case MM_WOM_DONE :
-			soundFill((HWAVEOUT)wParam, (WAVEHDR*)lParam);
-			break;
+			case MM_WOM_DONE :
+				soundFill((HWAVEOUT)wParam, (WAVEHDR*)lParam);
+				break;
 		#endif
 		case WM_ACTIVATEAPP :
 			if (short(wParam)) {
 				Core::resume();
-			#ifndef NO_SOUND
-				waveOutRestart(waveOut);
-			#endif
+				#ifndef NO_SOUND
+					waveOutRestart(waveOut);
+				#endif
 			} else {
 				Core::pause();
-			#ifndef NO_SOUND
-				waveOutPause(waveOut);
-			#endif
+				#ifndef NO_SOUND
+					waveOutPause(waveOut);
+				#endif
 			}
 			break;
 		case WM_DESTROY :
-			quit = true;
+			quit = true; 
+			break;
+		case WM_SIZE :
+			Render::resize(LOWORD(lParam), HIWORD(lParam));
 			break;
 		case WM_MOUSEMOVE :
-			Core::touch(wParam & MK_LBUTTON ? 0 : (wParam & MK_RBUTTON ? 1 : 2), TOUCH_MOVE, LOWORD(lParam), HIWORD(lParam));
+			Core::inputEvent( InputEvent(IS_MOVE, IK_MOUSE, wParam & MK_LBUTTON ? 0 : (wParam & MK_RBUTTON ? 1 : 2), LOWORD(lParam), HIWORD(lParam)) );
 			break;
 		case WM_LBUTTONDOWN :
 		case WM_LBUTTONUP :
 		case WM_LBUTTONDBLCLK :
-			Core::touch(0, message == WM_LBUTTONUP ? TOUCH_UP : TOUCH_DOWN, LOWORD(lParam), HIWORD(lParam));
+			Core::inputEvent( InputEvent(message == WM_LBUTTONUP ? IS_UP : IS_DOWN, IK_MOUSE, 0, LOWORD(lParam), HIWORD(lParam)) );
 			break;
 		case WM_RBUTTONDOWN :
 		case WM_RBUTTONUP :
 		case WM_RBUTTONDBLCLK :
-			Core::touch(1, message == WM_RBUTTONUP ? TOUCH_UP : TOUCH_DOWN, LOWORD(lParam), HIWORD(lParam));
+			Core::inputEvent( InputEvent(message == WM_RBUTTONUP ? IS_UP : IS_DOWN, IK_MOUSE, 1, LOWORD(lParam), HIWORD(lParam)) );
+			break;
+		case WM_MBUTTONDOWN :
+		case WM_MBUTTONUP :
+		case WM_MBUTTONDBLCLK :
+			Core::inputEvent( InputEvent(message == WM_MBUTTONUP ? IS_UP : IS_DOWN, IK_MOUSE, 2, LOWORD(lParam), HIWORD(lParam)) );
+			break;
+		case WM_MOUSEWHEEL :
+			Core::input->mouse.wheel += (wParam >> 16) / 120;
+			break;
+			/*
+		case WM_TOUCH :
+			count = LOWORD(wParam);
+			touch = new TOUCHINPUT[count];
+			if (GetTouchInputInfo((HTOUCHINPUT)lParam, count, touch, sizeof(TOUCHINPUT))) {
+				for (int i = 0; i < count; i++) {
+					TOUCHINPUT &t = touch[i];
+					if (!(t.dwFlags & (TOUCHEVENTF_MOVE | TOUCHEVENTF_DOWN | TOUCHEVENTF_UP)))
+						continue;
+					InputState state = (t.dwFlags & TOUCHEVENTF_MOVE ? IS_MOVE : (
+										t.dwFlags & TOUCHEVENTF_DOWN ? IS_DOWN : IS_UP));
+					LOG("touch %d %d %d %d\n", (int)state, (int)t.dwID, (int)t.x, (int)t.y);
+				}
+				CloseTouchInputHandle((HTOUCHINPUT)lParam);
+			}
+			delete touch;
+			break;
+			*/
+		case WM_CHAR :
+			Core::inputEvent( InputEvent((char)wParam) );
 			break;
 		case WM_KEYDOWN :
 		case WM_KEYUP :
-			Core::touch(wParam, message == WM_KEYUP ? TOUCH_KEYUP : TOUCH_KEYDOWN, 0, 0);
+			Core::inputEvent( InputEvent(message == WM_KEYUP ? IS_UP : IS_DOWN, convKey(wParam)) );
 			break;
 		default:
 			return DefWindowProcA(hWnd, message, wParam, lParam);
@@ -151,6 +206,7 @@ int main(int argc, char *argv[]) {
 	WSAData wData;
 	WSAStartup(0x0101, &wData);
 
+	Render::resize(WIDTH, HEIGHT);
 	Core::init("data.jet", getTime);
 	Core::reset();
 	Core::resume();

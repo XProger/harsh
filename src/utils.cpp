@@ -167,9 +167,10 @@ Stream::Stream(Hash hash) : ptr(0), pos(0), size(0) {
                 }
                 delete[] cdata;
             }
-
             return;
         }
+
+
     LOG("Stream: file not found %u\n", hash);
 }
 

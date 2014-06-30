@@ -14,29 +14,11 @@
 #define CORE_H
 
 #include "utils.h"
+#include "input.h"
+#include "scene.h"
 #include "game.h"
 
 typedef int (*getTimePtr)(void);
-
-enum TouchState { TOUCH_DOWN = 0, TOUCH_UP, TOUCH_MOVE, TOUCH_KEYDOWN, TOUCH_KEYUP };
-
-struct Touch {
-	vec2 start, pos;
-	bool down;
-};
-
-struct Mouse {
-	vec2 pos;
-};
-
-struct Input {
-	Touch	touch[8];
-	Mouse	mouse;
-	bool	key[256];
-
-	void reset();
-	void process(int id, int state, int x, int y);
-};
 
 struct Core {
     static float deltaTime;
@@ -55,7 +37,8 @@ struct Core {
     static void resize(int width, int height);
     static void update();
     static void render();
-    static void touch(int id, int state, int x, int y);
+
+    static void inputEvent(const InputEvent &e);
 };
 
 #endif // CORE_H
